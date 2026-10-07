@@ -3,5 +3,7 @@ node_modules/
 out/
 dist/
 *.log
+.env*
+!.env.example
 .DS_Store
 .superpowers/sdd/

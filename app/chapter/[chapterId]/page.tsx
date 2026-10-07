@@ -4,6 +4,7 @@ import ReaderKeys from "@/components/ReaderKeys";
 import BackToTop from "@/components/BackToTop";
 import Breadcrumb from "@/components/Breadcrumb";
 import { getChapter, getComicDetail, pickPages } from "@/lib/sanka";
+import { requireOwner } from "@/lib/gate";
 
 export default async function ChapterPage({
   params,
@@ -12,6 +13,7 @@ export default async function ChapterPage({
   params: Promise<{ chapterId: string }>;
   searchParams: Promise<{ manga?: string; proxy?: string }>;
 }) {
+  await requireOwner();
   const { chapterId } = await params;
   const sp = await searchParams;
   const proxyParam = sp.proxy ?? "1";

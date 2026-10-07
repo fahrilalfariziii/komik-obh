@@ -1,11 +1,13 @@
 import MangaCard from "@/components/MangaCard";
 import { searchComics } from "@/lib/sanka";
+import { requireOwner } from "@/lib/gate";
 
 export default async function SearchPage({
   searchParams,
 }: {
   searchParams: Promise<{ q?: string }>;
 }) {
+  await requireOwner();
   const { q = "" } = await searchParams;
   if (!q.trim()) {
     return (

@@ -2,12 +2,14 @@ import Link from "next/link";
 import Breadcrumb from "@/components/Breadcrumb";
 import ChapterList from "@/components/ChapterList";
 import { getComicDetail } from "@/lib/sanka";
+import { requireOwner } from "@/lib/gate";
 
 export default async function MangaPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requireOwner();
   const { id } = await params;
 
   let detail;

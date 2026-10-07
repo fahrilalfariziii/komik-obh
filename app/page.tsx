@@ -1,8 +1,10 @@
 import Link from "next/link";
 import MangaCard from "@/components/MangaCard";
 import { getLatest, getPopular, slugFromLink } from "@/lib/sanka";
+import { requireOwner } from "@/lib/gate";
 
 export default async function Home() {
+  await requireOwner();
   const [popular, latest] = await Promise.all([
     getPopular().catch(() => ({ comics: [] })),
     getLatest().catch(() => ({ comics: [] })),

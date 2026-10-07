@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Show, SignInButton, UserButton } from "@clerk/nextjs";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -29,12 +30,12 @@ export default function Navbar() {
             Cari Komik
           </Link>
         </nav>
-        <form action="/search" method="get" role="search" className="ml-auto flex gap-2">
+        <form action="/search" method="get" role="search" className="ml-auto hidden gap-2 md:flex">
           <input
             name="q"
             placeholder="Cari judul..."
             aria-label="Cari komik"
-            className="h-11 w-32 rounded-md border border-zinc-800 bg-zinc-900 px-3 text-sm outline-none focus:border-amber-400 sm:w-56"
+            className="h-11 w-40 rounded-md border border-zinc-800 bg-zinc-900 px-3 text-sm outline-none focus:border-amber-400 lg:w-56"
           />
           <button
             type="submit"
@@ -43,6 +44,18 @@ export default function Navbar() {
             Cari
           </button>
         </form>
+        <div className="ml-auto flex items-center gap-2 md:ml-0">
+          <Show when="signed-out">
+            <SignInButton>
+              <button className="flex min-h-[44px] items-center rounded-md bg-amber-400 px-4 text-sm font-medium text-black">
+                Masuk
+              </button>
+            </SignInButton>
+          </Show>
+          <Show when="signed-in">
+            <UserButton />
+          </Show>
+        </div>
       </div>
     </header>
   );
