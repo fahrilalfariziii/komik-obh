@@ -1,6 +1,5 @@
 import MangaCard from "@/components/MangaCard";
-import { mangaTitle, coverUrl } from "@/lib/manga-ui";
-import { searchManga } from "@/lib/mangadex";
+import { searchComics } from "@/lib/sanka";
 
 export default async function SearchPage({
   searchParams,
@@ -16,10 +15,11 @@ export default async function SearchPage({
     );
   }
 
-  let json: { data?: Array<{ id: string; attributes: { title: Record<string, string>; status?: string }; relationships: Array<{ type: string; attributes?: { fileName?: string } }> }>; error?: string } = { data: [] };
+  let items: Array<{ title: string; slug: string; thumbnail: string; type?: string }> = [];
   let loadError = "";
   try {
-    json = await searchManga(q);
+    const json = await searchComics(q);
+    items = json.data ?? [];
   } catch (e) {
     loadError = e instanceof Error ? e.message : "Gagal memuat.";
   }
@@ -31,8 +31,6 @@ export default async function SearchPage({
       </main>
     );
   }
-
-  const items = json.data ?? [];
   if (!items.length) {
     return (
       <main className="mx-auto max-w-5xl px-4 py-10 text-sm text-zinc-400">
@@ -47,11 +45,11 @@ export default async function SearchPage({
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-6">
         {items.map((m) => (
           <MangaCard
-            key={m.id}
-            id={m.id}
-            title={mangaTitle(m.attributes.title)}
-            cover={coverUrl(m.id, m.relationships)}
-            status={m.attributes.status}
+            key={m.slug}
+            id={m.slug}
+            title={m.title}
+            cover={m.thumbnail}
+            status={m.type}
           />
         ))}
       </div>
