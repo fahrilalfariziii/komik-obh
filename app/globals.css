@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+  --app-bg: #09090b;
+  --reader-bg: #000000;
+  --accent: #fbbf24;
+}
+
+html,
+body {
+  background: var(--app-bg);
+  color: #f4f4f5;
+}
+
+.reader-stage {
+  background: var(--reader-bg);
+}
