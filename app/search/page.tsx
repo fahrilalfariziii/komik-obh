@@ -1,17 +1,6 @@
 import MangaCard from "@/components/MangaCard";
 import { mangaTitle, coverUrl } from "@/lib/manga-ui";
-
-async function search(q: string) {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL ?? ""}/api/mangadex/search?q=${encodeURIComponent(q)}`,
-    { cache: "no-store" }
-  ).catch(() => null);
-  if (res && res.ok) return res.json();
-  const direct = await fetch(
-    `https://api.mangadex.org/manga?title=${encodeURIComponent(q)}&availableTranslatedLanguage[]=id&availableTranslatedLanguage[]=en&includes[]=cover_art&limit=24&contentRating[]=safe&contentRating[]=suggestive`
-  );
-  return direct.json();
-}
+import { searchManga } from "@/lib/mangadex";
 
 export default async function SearchPage({
   searchParams,
@@ -27,13 +16,18 @@ export default async function SearchPage({
     );
   }
 
-  let json: { data?: Array<{ id: string; attributes: { title: Record<string, string>; status?: string }; relationships: Array<{ type: string; attributes?: { fileName?: string } }> }> } = { data: [] };
+  let json: { data?: Array<{ id: string; attributes: { title: Record<string, string>; status?: string }; relationships: Array<{ type: string; attributes?: { fileName?: string } }> }>; error?: string } = { data: [] };
+  let loadError = "";
   try {
-    json = await search(q);
-  } catch {
+    json = await searchManga(q);
+  } catch (e) {
+    loadError = e instanceof Error ? e.message : "Gagal memuat.";
+  }
+  if (loadError) {
     return (
       <main className="mx-auto max-w-5xl px-4 py-10 text-sm">
-        <p className="text-zinc-100">Gagal memuat. Coba lagi 30 detik.</p>
+        <p className="text-zinc-100">Gagal memuat.</p>
+        <p className="mt-2 text-zinc-400">{loadError}</p>
       </main>
     );
   }

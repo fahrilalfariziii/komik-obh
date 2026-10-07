@@ -16,13 +16,26 @@ export function feedQuery(mangaId: string, lang: string) {
   return `manga/${mangaId}/feed?translatedLanguage[]=${lang}&order[chapter]=asc&limit=500`;
 }
 
+export function friendlyMangaDexError(e: unknown): string {
+  const raw = e instanceof Error ? e.message : String(e);
+  if (/fetch failed|ENOTFOUND|EAI_AGAIN|ECONNRESET|certificate|SSL/i.test(raw)) {
+    return "Tidak bisa mencapai api.mangadex.org (fetch failed). Di jaringan Indonesia domain ini sering dibajak DNS ke aduankonten.id (Internet Positif). Aktifkan DNS-over-HTTPS di perangkat atau deploy server di luar ID, lalu coba lagi.";
+  }
+  return raw;
+}
+
 async function mdFetch(path: string, revalidate: number) {
   let lastErr: unknown = null;
   for (let attempt = 0; attempt < 2; attempt++) {
-    const res = await fetch(`${BASE}/${path}`, {
-      next: { revalidate },
-      headers: { "User-Agent": "komik-reader/0.1" },
-    });
+    let res;
+    try {
+      res = await fetch(`${BASE}/${path}`, {
+        next: { revalidate },
+        headers: { "User-Agent": "komik-reader/0.1" },
+      });
+    } catch (e) {
+      throw new Error(friendlyMangaDexError(e));
+    }
     if (res.status === 429 && attempt === 0) {
       await new Promise((r) => setTimeout(r, 1200));
       continue;
