@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-function PageImage({ src, index }: { src: string; index: number }) {
+function PageImage({ src, index, eager }: { src: string; index: number; eager: boolean }) {
   const [failed, setFailed] = useState(false);
   const [retry, setRetry] = useState(0);
   if (failed) {
@@ -27,10 +27,11 @@ function PageImage({ src, index }: { src: string; index: number }) {
       key={`${src}-${retry}`}
       src={retry ? `${src}?r=${retry}` : src}
       alt={`Halaman ${index + 1}`}
-      loading="lazy"
+      loading={eager ? "eager" : "lazy"}
+      fetchPriority={eager ? "high" : "auto"}
       decoding="async"
       onError={() => setFailed(true)}
-      className="mx-auto block w-full max-w-3xl"
+      className="mx-auto block h-auto w-full max-w-3xl"
     />
   );
 }
@@ -49,7 +50,7 @@ export default function ReaderView({ pages }: { pages: string[] }) {
       <div className="reader-stage" onScrollCapture={() => {}}>
         {pages.map((src, i) => (
           <div key={src} onClick={() => setRead(i)}>
-            <PageImage src={src} index={i} />
+            <PageImage src={src} index={i} eager={i < 2} />
           </div>
         ))}
       </div>

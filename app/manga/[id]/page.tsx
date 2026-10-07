@@ -1,3 +1,5 @@
+import Link from "next/link";
+import Breadcrumb from "@/components/Breadcrumb";
 import ChapterList from "@/components/ChapterList";
 import { getComicDetail } from "@/lib/sanka";
 
@@ -23,8 +25,14 @@ export default async function MangaPage({
   }
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-8">
-      <div className="flex gap-4">
+    <main className="mx-auto max-w-4xl px-4 py-6">
+      <Breadcrumb
+        trail={[
+          { label: "Beranda", href: "/" },
+          { label: detail.title },
+        ]}
+      />
+      <div className="mt-3 flex gap-4">
         {detail.image ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -54,6 +62,14 @@ export default async function MangaPage({
                 </span>
               ))}
             </div>
+          ) : null}
+          {detail.chapters.length ? (
+            <Link
+              href={`/chapter/${detail.chapters[detail.chapters.length - 1].slug}?manga=${detail.slug}`}
+              className="mt-3 inline-block rounded-md bg-amber-400 px-4 py-2 text-sm font-medium text-black"
+            >
+              Mulai Baca
+            </Link>
           ) : null}
         </div>
       </div>

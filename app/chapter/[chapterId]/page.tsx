@@ -1,6 +1,9 @@
 import ReaderView from "@/components/ReaderView";
-import ReaderToolbar from "@/components/ReaderToolbar";
-import { getChapter, pickPages } from "@/lib/sanka";
+import ReaderToolbar, { ReaderBottomBar } from "@/components/ReaderToolbar";
+import ReaderKeys from "@/components/ReaderKeys";
+import BackToTop from "@/components/BackToTop";
+import Breadcrumb from "@/components/Breadcrumb";
+import { getChapter, getComicDetail, pickPages } from "@/lib/sanka";
 
 export default async function ChapterPage({
   params,
@@ -30,17 +33,48 @@ export default async function ChapterPage({
 
   const mangaSlug = sp.manga ?? chapter.navigation.chapterList;
   const pages = pickPages(chapter.images, chapter.imagesproxy, useProxy);
+  const proxyQuery = useProxy ? "" : "&proxy=0";
+  const prevHref = chapter.navigation.previousChapter
+    ? `/chapter/${chapter.navigation.previousChapter}?manga=${mangaSlug}${proxyQuery}`
+    : null;
+  const nextHref = chapter.navigation.nextChapter
+    ? `/chapter/${chapter.navigation.nextChapter}?manga=${mangaSlug}${proxyQuery}`
+    : null;
+  const detail = await getComicDetail(mangaSlug).catch(() => null);
+  const chapters = detail?.chapters ?? [];
+  const title = `${chapter.manga_title} - ${chapter.chapter_title}`;
 
   return (
     <main className="min-h-screen bg-black text-zinc-100">
+      <div className="mx-auto max-w-3xl px-4 pt-4">
+        <Breadcrumb
+          trail={[
+            { label: "Beranda", href: "/" },
+            { label: chapter.manga_title, href: `/manga/${mangaSlug}` },
+            { label: chapter.chapter_title },
+          ]}
+        />
+      </div>
       <ReaderToolbar
         mangaSlug={mangaSlug}
         useProxy={useProxy}
         prevSlug={chapter.navigation.previousChapter}
         nextSlug={chapter.navigation.nextChapter}
-        title={`${chapter.manga_title} - ${chapter.chapter_title}`}
+        title={title}
+        chapters={chapters}
+        currentSlug={chapterId}
       />
+      <ReaderKeys prevHref={prevHref} nextHref={nextHref} />
       <ReaderView pages={pages} />
+      <ReaderBottomBar
+        mangaSlug={mangaSlug}
+        useProxy={useProxy}
+        prevSlug={chapter.navigation.previousChapter}
+        nextSlug={chapter.navigation.nextChapter}
+        chapters={chapters}
+        currentSlug={chapterId}
+      />
+      <BackToTop />
     </main>
   );
 }

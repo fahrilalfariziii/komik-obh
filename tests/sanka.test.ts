@@ -3,6 +3,7 @@ import {
   chapterUrl,
   comicUrl,
   searchUrl,
+  slugFromLink,
   friendlySankaError,
   pickPages,
 } from "../lib/sanka";
@@ -32,6 +33,18 @@ describe("pickPages", () => {
   it("memakai images langsung saat mode langsung", () => {
     const pages = pickPages(["a.jpg"], ["proxy-a.jpg"], false);
     expect(pages).toEqual(["a.jpg"]);
+  });
+});
+
+describe("slugFromLink", () => {
+  it("mengambil segmen terakhir dari url penuh", () => {
+    expect(slugFromLink("https://komiku.org/manga/spy-x-family/")).toBe("spy-x-family");
+  });
+
+  it("mengambil segmen terakhir dari path relatif", () => {
+    expect(slugFromLink("/manga/became-the-patron-of-villains/")).toBe(
+      "became-the-patron-of-villains"
+    );
   });
 });
 

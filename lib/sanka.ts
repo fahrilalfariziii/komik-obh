@@ -56,6 +56,19 @@ export function pickPages(images: string[], imagesproxy: string[], useProxy: boo
   return useProxy ? imagesproxy : images;
 }
 
+export function slugFromLink(link: string): string {
+  const parts = link.replace(/\/+$/, "").split("/");
+  return parts[parts.length - 1] ?? link;
+}
+
+export type SankaHomeItem = {
+  title: string;
+  link: string;
+  image: string;
+  chapter?: string;
+  time_ago?: string;
+};
+
 export function friendlySankaError(e: unknown): string {
   const raw = e instanceof Error ? e.message : String(e);
   if (/fetch failed|ENOTFOUND|EAI_AGAIN|ECONNRESET|certificate|SSL/i.test(raw)) {
@@ -93,4 +106,12 @@ export function getComicDetail(slug: string) {
 
 export function getChapter(slug: string) {
   return sankaFetch<SankaChapter>(chapterUrl(slug), 600);
+}
+
+export function getPopular() {
+  return sankaFetch<{ comics?: SankaHomeItem[] }>(`${SANKA_BASE}/populer`, 900);
+}
+
+export function getLatest() {
+  return sankaFetch<{ comics?: SankaHomeItem[] }>(`${SANKA_BASE}/terbaru`, 300);
 }
