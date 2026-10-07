@@ -1,6 +1,8 @@
 import ReaderView from "@/components/ReaderView";
-import ReaderBottomPill from "@/components/ReaderToolbar";
+import ReaderBottomBar from "@/components/ReaderToolbar";
 import ReaderKeys from "@/components/ReaderKeys";
+import ReaderTopBar from "@/components/ReaderTopBar";
+import BackToTop from "@/components/BackToTop";
 import Breadcrumb from "@/components/Breadcrumb";
 import { getChapter, getComicDetail, pickPages } from "@/lib/sanka";
 import { requireOwner } from "@/lib/gate";
@@ -46,7 +48,8 @@ export default async function ChapterPage({
 
   return (
     <main className="min-h-screen bg-black text-zinc-100">
-      <div className="mx-auto max-w-3xl px-4 pt-4">
+      <ReaderTopBar mangaTitle={chapter.manga_title} chapterTitle={chapter.chapter_title} />
+      <div className="mx-auto max-w-3xl px-4 pt-16">
         <Breadcrumb
           trail={[
             { label: "Beranda", href: "/" },
@@ -54,14 +57,14 @@ export default async function ChapterPage({
             { label: chapter.chapter_title },
           ]}
         />
-        <h1 className="mt-2 text-lg font-bold leading-snug">{chapter.manga_title}</h1>
-        <p className="text-sm text-amber-300">{chapter.chapter_title}</p>
+        <h1 className="mt-2 text-center text-lg font-bold leading-snug">{chapter.manga_title}</h1>
+        <p className="text-center text-sm text-amber-300">{chapter.chapter_title}</p>
       </div>
       <ReaderKeys prevHref={prevHref} nextHref={nextHref} />
       <div className="pb-28">
         <ReaderView pages={pages} />
       </div>
-      <ReaderBottomPill
+      <ReaderBottomBar
         mangaSlug={mangaSlug}
         useProxy={useProxy}
         prevSlug={chapter.navigation.previousChapter}
@@ -69,6 +72,7 @@ export default async function ChapterPage({
         chapters={chapters}
         currentSlug={chapterId}
       />
+      <BackToTop />
     </main>
   );
 }

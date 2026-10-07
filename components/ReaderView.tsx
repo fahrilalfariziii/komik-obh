@@ -56,9 +56,6 @@ export default function ReaderView({ pages }: { pages: string[] }) {
   const pct = Math.round(((read + 1) / pages.length) * 100);
   return (
     <div>
-      <div className="sticky top-0 z-0 h-1 bg-zinc-800" aria-hidden="true">
-        <div className="h-full bg-amber-400" style={{ width: `${pct}%` }} />
-      </div>
       <div className="reader-stage">
         {pages.map((src, i) => (
           <div key={src} onClick={() => setRead(i)}>

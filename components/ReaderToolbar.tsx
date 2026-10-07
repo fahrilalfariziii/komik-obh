@@ -30,12 +30,11 @@ const PATHS = {
   list: "M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01",
   book: "M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z",
   zap: "M13 2 3 14h9l-1 8 10-12h-9l1-8z",
-  up: "M12 19V5M5 12l7-7 7 7",
   hide: "M6 9l6 6 6-6",
   show: "M18 15l-6-6-6 6",
 };
 
-type PillProps = {
+type BarProps = {
   mangaSlug: string;
   useProxy: boolean;
   prevSlug: string | null;
@@ -44,10 +43,10 @@ type PillProps = {
   currentSlug: string;
 };
 
-const BTN =
+const ICON_BTN =
   "flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-zinc-200 hover:bg-zinc-800";
 
-export default function ReaderBottomPill(props: PillProps) {
+export default function ReaderBottomBar(props: BarProps) {
   const { mangaSlug, useProxy, prevSlug, nextSlug, chapters, currentSlug } = props;
   const [visible, setVisible] = useState(true);
   const proxyQuery = useProxy ? "" : "&proxy=0";
@@ -67,7 +66,7 @@ export default function ReaderBottomPill(props: PillProps) {
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
-      <div className="mx-auto flex max-w-fit flex-col items-center gap-1.5">
+      <div className="mx-auto flex max-w-3xl flex-col items-center gap-1.5">
         <button
           onClick={() => setVisible(false)}
           aria-label="Sembunyikan toolbar baca"
@@ -77,7 +76,7 @@ export default function ReaderBottomPill(props: PillProps) {
           <Icon d={PATHS.hide} label="Sembunyikan toolbar" />
         </button>
         <div
-          className="flex max-w-full items-center justify-center gap-1 rounded-2xl border border-zinc-700 bg-zinc-950/95 px-2 py-2 shadow-2xl backdrop-blur"
+          className="flex w-full items-center justify-between gap-1 rounded-2xl border border-zinc-700 bg-zinc-950/95 px-2 py-2 shadow-2xl backdrop-blur"
           role="toolbar"
           aria-label="Navigasi baca"
         >
@@ -86,48 +85,53 @@ export default function ReaderBottomPill(props: PillProps) {
               href={`/chapter/${prevSlug}?manga=${mangaSlug}${proxyQuery}`}
               aria-label="Chapter sebelumnya"
               title="Sebelumnya"
-              className={BTN}
+              className="flex min-h-[44px] items-center gap-1 rounded-xl px-3 text-sm text-zinc-200 hover:bg-zinc-800"
             >
               <Icon d={PATHS.prev} label="Sebelumnya" />
+              <span className="hidden sm:inline">Prev</span>
             </Link>
           ) : (
             <Link
               href={`/manga/${mangaSlug}`}
               aria-label="Kembali ke daftar chapter"
               title="Daftar chapter"
-              className={BTN}
+              className={ICON_BTN}
             >
               <Icon d={PATHS.list} label="Daftar chapter" />
             </Link>
           )}
-          <ChapterDrawer chapters={chapters} mangaSlug={mangaSlug} currentSlug={currentSlug} />
+          <div className="flex items-center gap-1">
+            <ChapterDrawer chapters={chapters} mangaSlug={mangaSlug} currentSlug={currentSlug} />
+            <Link
+              href={`?manga=${mangaSlug}${useProxy ? "&proxy=0" : ""}`}
+              aria-label={useProxy ? "Pakai gambar langsung" : "Pakai gambar via proxy"}
+              title={useProxy ? "Gambar langsung" : "Gambar via proxy"}
+              aria-pressed={useProxy}
+              className={ICON_BTN}
+            >
+              <Icon d={PATHS.zap} label="Sumber gambar" />
+            </Link>
+          </div>
           {nextSlug ? (
             <Link
               href={`/chapter/${nextSlug}?manga=${mangaSlug}${proxyQuery}`}
               aria-label="Chapter berikutnya"
               title="Berikutnya"
-              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl bg-amber-400 text-black"
+              className="flex min-h-[44px] items-center gap-1 rounded-xl bg-amber-400 px-3 text-sm font-semibold text-black"
             >
+              <span className="hidden sm:inline">Next</span>
               <Icon d={PATHS.next} label="Berikutnya" />
             </Link>
-          ) : null}
-          <Link
-            href={`?manga=${mangaSlug}${useProxy ? "&proxy=0" : ""}`}
-            aria-label={useProxy ? "Pakai gambar langsung" : "Pakai gambar via proxy"}
-            title={useProxy ? "Gambar langsung" : "Gambar via proxy"}
-            aria-pressed={useProxy}
-            className={BTN}
-          >
-            <Icon d={PATHS.zap} label="Sumber gambar" />
-          </Link>
-          <button
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            aria-label="Kembali ke atas"
-            title="Ke atas"
-            className={BTN}
-          >
-            <Icon d={PATHS.up} label="Ke atas" />
-          </button>
+          ) : (
+            <Link
+              href={`/manga/${mangaSlug}`}
+              aria-label="Kembali ke daftar chapter"
+              title="Daftar chapter"
+              className={ICON_BTN}
+            >
+              <Icon d={PATHS.list} label="Daftar chapter" />
+            </Link>
+          )}
         </div>
       </div>
     </div>
