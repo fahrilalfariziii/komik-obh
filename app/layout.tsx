@@ -15,6 +15,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id" className="dark">
+      <link rel="preconnect" href="https://www.sankavollerei.web.id" />
+      <link rel="dns-prefetch" href="https://www.sankavollerei.web.id" />
       <body className="min-h-screen bg-zinc-950 text-zinc-100 antialiased">
         <Navbar />
         <div className="pb-16 sm:pb-0">{children}</div>

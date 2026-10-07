@@ -4,6 +4,7 @@ import { useState } from "react";
 
 function PageImage({ src, index, eager }: { src: string; index: number; eager: boolean }) {
   const [failed, setFailed] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const [retry, setRetry] = useState(0);
   if (failed) {
     return (
@@ -14,7 +15,7 @@ function PageImage({ src, index, eager }: { src: string; index: number; eager: b
             setFailed(false);
             setRetry((r) => r + 1);
           }}
-          className="rounded-md bg-amber-400 px-4 py-2 text-sm font-medium text-black"
+          className="flex min-h-[44px] items-center rounded-md bg-amber-400 px-5 text-sm font-medium text-black"
         >
           Coba lagi
         </button>
@@ -22,17 +23,28 @@ function PageImage({ src, index, eager }: { src: string; index: number; eager: b
     );
   }
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      key={`${src}-${retry}`}
-      src={retry ? `${src}?r=${retry}` : src}
-      alt={`Halaman ${index + 1}`}
-      loading={eager ? "eager" : "lazy"}
-      fetchPriority={eager ? "high" : "auto"}
-      decoding="async"
-      onError={() => setFailed(true)}
-      className="mx-auto block h-auto w-full max-w-3xl"
-    />
+    <div className="relative mx-auto w-full max-w-3xl">
+      {!loaded ? (
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 min-h-64 animate-pulse bg-zinc-900"
+        />
+      ) : null}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        key={`${src}-${retry}`}
+        src={retry ? `${src}?r=${retry}` : src}
+        alt={`Halaman ${index + 1}`}
+        loading={eager ? "eager" : "lazy"}
+        fetchPriority={eager ? "high" : "auto"}
+        decoding="async"
+        onLoad={() => setLoaded(true)}
+        onError={() => setFailed(true)}
+        className={`relative mx-auto block h-auto w-full transition-opacity duration-300 ${
+          loaded ? "opacity-100" : "opacity-0"
+        }`}
+      />
+    </div>
   );
 }
 
@@ -47,10 +59,10 @@ export default function ReaderView({ pages }: { pages: string[] }) {
       <div className="sticky top-0 z-0 h-1 bg-zinc-800" aria-hidden="true">
         <div className="h-full bg-amber-400" style={{ width: `${pct}%` }} />
       </div>
-      <div className="reader-stage" onScrollCapture={() => {}}>
+      <div className="reader-stage">
         {pages.map((src, i) => (
           <div key={src} onClick={() => setRead(i)}>
-            <PageImage src={src} index={i} eager={i < 2} />
+            <PageImage src={src} index={i} eager={i < 3} />
           </div>
         ))}
       </div>

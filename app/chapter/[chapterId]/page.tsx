@@ -1,5 +1,5 @@
 import ReaderView from "@/components/ReaderView";
-import ReaderToolbar, { ReaderBottomBar } from "@/components/ReaderToolbar";
+import ReaderBottomPill from "@/components/ReaderToolbar";
 import ReaderKeys from "@/components/ReaderKeys";
 import BackToTop from "@/components/BackToTop";
 import Breadcrumb from "@/components/Breadcrumb";
@@ -42,7 +42,6 @@ export default async function ChapterPage({
     : null;
   const detail = await getComicDetail(mangaSlug).catch(() => null);
   const chapters = detail?.chapters ?? [];
-  const title = `${chapter.manga_title} - ${chapter.chapter_title}`;
 
   return (
     <main className="min-h-screen bg-black text-zinc-100">
@@ -55,18 +54,11 @@ export default async function ChapterPage({
           ]}
         />
       </div>
-      <ReaderToolbar
-        mangaSlug={mangaSlug}
-        useProxy={useProxy}
-        prevSlug={chapter.navigation.previousChapter}
-        nextSlug={chapter.navigation.nextChapter}
-        title={title}
-        chapters={chapters}
-        currentSlug={chapterId}
-      />
       <ReaderKeys prevHref={prevHref} nextHref={nextHref} />
-      <ReaderView pages={pages} />
-      <ReaderBottomBar
+      <div className="pb-28">
+        <ReaderView pages={pages} />
+      </div>
+      <ReaderBottomPill
         mangaSlug={mangaSlug}
         useProxy={useProxy}
         prevSlug={chapter.navigation.previousChapter}

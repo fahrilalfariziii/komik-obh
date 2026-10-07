@@ -5,78 +5,77 @@ import Link from "next/link";
 import ChapterDrawer from "@/components/ChapterDrawer";
 import type { SankaChapterEntry } from "@/lib/sanka";
 
-type NavProps = {
+type PillProps = {
   mangaSlug: string;
   useProxy: boolean;
   prevSlug: string | null;
   nextSlug: string | null;
-  title: string;
   chapters: SankaChapterEntry[];
   currentSlug: string;
 };
 
-function NavButtons({ mangaSlug, useProxy, prevSlug, nextSlug, chapters, currentSlug }: Omit<NavProps, "title">) {
+export default function ReaderBottomPill(props: PillProps) {
+  const { mangaSlug, useProxy, prevSlug, nextSlug, chapters, currentSlug } = props;
+  const [visible, setVisible] = useState(true);
   const proxyQuery = useProxy ? "" : "&proxy=0";
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      <Link
-        href={`/manga/${mangaSlug}`}
-        className="flex min-h-[44px] items-center rounded-md border border-zinc-700 px-4 text-sm text-zinc-200"
-      >
-        Daftar
-      </Link>
-      {prevSlug ? (
-        <Link
-          href={`/chapter/${prevSlug}?manga=${mangaSlug}${proxyQuery}`}
-          className="flex min-h-[44px] items-center rounded-md border border-zinc-700 px-4 text-sm text-zinc-200"
-        >
-          Prev
-        </Link>
-      ) : null}
-      {nextSlug ? (
-        <Link
-          href={`/chapter/${nextSlug}?manga=${mangaSlug}${proxyQuery}`}
-          className="flex min-h-[44px] items-center rounded-md bg-amber-400 px-4 text-sm font-medium text-black"
-        >
-          Next
-        </Link>
-      ) : null}
-      <ChapterDrawer chapters={chapters} mangaSlug={mangaSlug} currentSlug={currentSlug} />
-      <Link
-        href={`?manga=${mangaSlug}${useProxy ? "&proxy=0" : ""}`}
-        className="flex min-h-[44px] items-center rounded-md border border-zinc-700 px-4 text-sm text-zinc-200"
-        aria-pressed={useProxy}
-      >
-        {useProxy ? "Gambar langsung" : "Gambar via proxy"}
-      </Link>
-    </div>
-  );
-}
 
-export default function ReaderToolbar(props: NavProps) {
-  const [open, setOpen] = useState(true);
-  return (
-    <div className="sticky top-0 z-10 border-b border-zinc-800 bg-zinc-950/95">
+  if (!visible) {
+    return (
       <button
-        onClick={() => setOpen((v) => !v)}
-        className="w-full px-4 py-2 text-center text-xs text-zinc-400"
-        aria-expanded={open}
+        onClick={() => setVisible(true)}
+        aria-label="Tampilkan toolbar baca"
+        className="fixed bottom-6 left-1/2 z-40 flex min-h-[44px] -translate-x-1/2 items-center gap-2 rounded-full border border-zinc-700 bg-zinc-900/95 px-5 text-sm text-zinc-100 shadow-xl backdrop-blur"
       >
-        {open ? "Sembunyikan toolbar" : props.title}
+        <span aria-hidden="true">▲</span> Navigasi
       </button>
-      {open ? (
-        <div className="px-4 pb-3">
-          <NavButtons {...props} />
-        </div>
-      ) : null}
-    </div>
-  );
-}
+    );
+  }
 
-export function ReaderBottomBar(props: Omit<NavProps, "title">) {
   return (
-    <div className="border-t border-zinc-800 bg-zinc-950 px-4 py-4">
-      <NavButtons {...props} />
+    <div className="fixed inset-x-0 bottom-0 z-40 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+      <div className="mx-auto flex max-w-fit flex-col items-center gap-1.5">
+        <button
+          onClick={() => setVisible(false)}
+          aria-label="Sembunyikan toolbar baca"
+          className="flex min-h-[32px] min-w-[64px] items-center justify-center rounded-full border border-zinc-700 bg-zinc-900/95 text-xs text-zinc-400 shadow-lg backdrop-blur"
+        >
+          <span aria-hidden="true">▼</span>
+        </button>
+        <div className="flex max-w-full flex-wrap items-center justify-center gap-2 rounded-2xl border border-zinc-700 bg-zinc-950/95 px-3 py-2.5 shadow-2xl backdrop-blur">
+          {prevSlug ? (
+            <Link
+              href={`/chapter/${prevSlug}?manga=${mangaSlug}${proxyQuery}`}
+              className="flex min-h-[44px] items-center rounded-xl px-4 text-sm text-zinc-200 hover:bg-zinc-800"
+            >
+              Prev
+            </Link>
+          ) : (
+            <Link
+              href={`/manga/${mangaSlug}`}
+              className="flex min-h-[44px] items-center rounded-xl px-4 text-sm text-zinc-200 hover:bg-zinc-800"
+            >
+              Daftar
+            </Link>
+          )}
+          <ChapterDrawer chapters={chapters} mangaSlug={mangaSlug} currentSlug={currentSlug} />
+          <Link
+            href={`?manga=${mangaSlug}${useProxy ? "&proxy=0" : ""}`}
+            aria-pressed={useProxy}
+            title={useProxy ? "Pakai gambar langsung" : "Pakai gambar via proxy"}
+            className="flex min-h-[44px] items-center rounded-xl px-3 text-xs text-zinc-400 hover:bg-zinc-800"
+          >
+            {useProxy ? "Langsung" : "Proxy"}
+          </Link>
+          {nextSlug ? (
+            <Link
+              href={`/chapter/${nextSlug}?manga=${mangaSlug}${proxyQuery}`}
+              className="flex min-h-[44px] items-center rounded-xl bg-amber-400 px-5 text-sm font-semibold text-black"
+            >
+              Next
+            </Link>
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 }
