@@ -32,13 +32,13 @@ export default async function MangaPage({
           { label: detail.title },
         ]}
       />
-      <div className="mt-3 flex gap-4">
+      <div className="mt-3 flex flex-col gap-4 min-[380px]:flex-row">
         {detail.image ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={detail.image}
             alt={detail.title}
-            className="w-28 rounded-md border border-zinc-800 object-cover"
+            className="w-28 shrink-0 self-start rounded-md border border-zinc-800 object-cover"
           />
         ) : null}
         <div>
@@ -66,7 +66,7 @@ export default async function MangaPage({
           {detail.chapters.length ? (
             <Link
               href={`/chapter/${detail.chapters[detail.chapters.length - 1].slug}?manga=${detail.slug}`}
-              className="mt-3 inline-block rounded-md bg-amber-400 px-4 py-2 text-sm font-medium text-black"
+              className="mt-3 inline-flex min-h-[44px] items-center rounded-md bg-amber-400 px-5 text-sm font-medium text-black"
             >
               Mulai Baca
             </Link>

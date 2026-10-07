@@ -11,6 +11,11 @@ html,
 body {
   background: var(--app-bg);
   color: #f4f4f5;
+  overflow-x: clip;
+}
+
+body {
+  -webkit-tap-highlight-color: transparent;
 }
 
 .reader-stage {

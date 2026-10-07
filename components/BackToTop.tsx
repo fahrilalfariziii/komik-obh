@@ -14,7 +14,7 @@ export default function BackToTop() {
     <button
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       aria-label="Kembali ke atas"
-      className="fixed bottom-6 right-4 z-40 rounded-full border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm text-zinc-100 shadow-lg"
+      className="fixed bottom-20 right-4 z-40 rounded-full border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm text-zinc-100 shadow-lg sm:bottom-6"
     >
       Ke atas
     </button>

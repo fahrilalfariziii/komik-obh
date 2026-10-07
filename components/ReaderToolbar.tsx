@@ -21,14 +21,14 @@ function NavButtons({ mangaSlug, useProxy, prevSlug, nextSlug, chapters, current
     <div className="flex flex-wrap items-center gap-2">
       <Link
         href={`/manga/${mangaSlug}`}
-        className="rounded-md border border-zinc-700 px-3 py-2 text-sm text-zinc-200"
+        className="flex min-h-[44px] items-center rounded-md border border-zinc-700 px-4 text-sm text-zinc-200"
       >
         Daftar
       </Link>
       {prevSlug ? (
         <Link
           href={`/chapter/${prevSlug}?manga=${mangaSlug}${proxyQuery}`}
-          className="rounded-md border border-zinc-700 px-3 py-2 text-sm text-zinc-200"
+          className="flex min-h-[44px] items-center rounded-md border border-zinc-700 px-4 text-sm text-zinc-200"
         >
           Prev
         </Link>
@@ -36,7 +36,7 @@ function NavButtons({ mangaSlug, useProxy, prevSlug, nextSlug, chapters, current
       {nextSlug ? (
         <Link
           href={`/chapter/${nextSlug}?manga=${mangaSlug}${proxyQuery}`}
-          className="rounded-md bg-amber-400 px-3 py-2 text-sm font-medium text-black"
+          className="flex min-h-[44px] items-center rounded-md bg-amber-400 px-4 text-sm font-medium text-black"
         >
           Next
         </Link>
@@ -44,7 +44,7 @@ function NavButtons({ mangaSlug, useProxy, prevSlug, nextSlug, chapters, current
       <ChapterDrawer chapters={chapters} mangaSlug={mangaSlug} currentSlug={currentSlug} />
       <Link
         href={`?manga=${mangaSlug}${useProxy ? "&proxy=0" : ""}`}
-        className="rounded-md border border-zinc-700 px-3 py-2 text-sm text-zinc-200"
+        className="flex min-h-[44px] items-center rounded-md border border-zinc-700 px-4 text-sm text-zinc-200"
         aria-pressed={useProxy}
       >
         {useProxy ? "Gambar langsung" : "Gambar via proxy"}

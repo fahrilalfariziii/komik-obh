@@ -34,7 +34,7 @@ export default function ChapterDrawer({
     <>
       <button
         onClick={() => setOpen(true)}
-        className="rounded-md border border-zinc-700 px-3 py-2 text-sm text-zinc-200"
+        className="flex min-h-[44px] items-center rounded-md border border-zinc-700 px-4 text-sm text-zinc-200"
       >
         Daftar Isi
       </button>

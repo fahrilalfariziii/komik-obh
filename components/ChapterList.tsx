@@ -44,12 +44,12 @@ export default function ChapterList({
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Cari chapter, misal 45"
           aria-label="Cari chapter"
-          className="h-10 flex-1 rounded-md border border-zinc-800 bg-zinc-900 px-3 text-sm outline-none focus:border-amber-400"
+          className="h-11 flex-1 rounded-md border border-zinc-800 bg-zinc-900 px-3 text-sm outline-none focus:border-amber-400"
         />
         <button
           onClick={() => setAsc((v) => !v)}
           aria-pressed={asc}
-          className="h-10 shrink-0 rounded-md border border-zinc-700 px-3 text-sm text-zinc-200"
+          className="h-11 shrink-0 rounded-md border border-zinc-700 px-4 text-sm text-zinc-200"
         >
           {asc ? "Terlama" : "Terbaru"}
         </button>
