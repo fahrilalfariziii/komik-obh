@@ -1,7 +1,6 @@
 import ReaderView from "@/components/ReaderView";
 import ReaderBottomPill from "@/components/ReaderToolbar";
 import ReaderKeys from "@/components/ReaderKeys";
-import BackToTop from "@/components/BackToTop";
 import Breadcrumb from "@/components/Breadcrumb";
 import { getChapter, getComicDetail, pickPages } from "@/lib/sanka";
 import { requireOwner } from "@/lib/gate";
@@ -55,6 +54,8 @@ export default async function ChapterPage({
             { label: chapter.chapter_title },
           ]}
         />
+        <h1 className="mt-2 text-lg font-bold leading-snug">{chapter.manga_title}</h1>
+        <p className="text-sm text-amber-300">{chapter.chapter_title}</p>
       </div>
       <ReaderKeys prevHref={prevHref} nextHref={nextHref} />
       <div className="pb-28">
@@ -68,7 +69,6 @@ export default async function ChapterPage({
         chapters={chapters}
         currentSlug={chapterId}
       />
-      <BackToTop />
     </main>
   );
 }

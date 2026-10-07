@@ -5,6 +5,36 @@ import Link from "next/link";
 import ChapterDrawer from "@/components/ChapterDrawer";
 import type { SankaChapterEntry } from "@/lib/sanka";
 
+function Icon({ d, label }: { d: string; label: string }) {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      role="img"
+      aria-label={label}
+    >
+      <path d={d} />
+    </svg>
+  );
+}
+
+const PATHS = {
+  prev: "M15 18l-6-6 6-6",
+  next: "M9 18l6-6-6-6",
+  list: "M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01",
+  book: "M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z",
+  zap: "M13 2 3 14h9l-1 8 10-12h-9l1-8z",
+  up: "M12 19V5M5 12l7-7 7 7",
+  hide: "M6 9l6 6 6-6",
+  show: "M18 15l-6-6-6 6",
+};
+
 type PillProps = {
   mangaSlug: string;
   useProxy: boolean;
@@ -13,6 +43,9 @@ type PillProps = {
   chapters: SankaChapterEntry[];
   currentSlug: string;
 };
+
+const BTN =
+  "flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-zinc-200 hover:bg-zinc-800";
 
 export default function ReaderBottomPill(props: PillProps) {
   const { mangaSlug, useProxy, prevSlug, nextSlug, chapters, currentSlug } = props;
@@ -24,9 +57,10 @@ export default function ReaderBottomPill(props: PillProps) {
       <button
         onClick={() => setVisible(true)}
         aria-label="Tampilkan toolbar baca"
-        className="fixed bottom-6 left-1/2 z-40 flex min-h-[44px] -translate-x-1/2 items-center gap-2 rounded-full border border-zinc-700 bg-zinc-900/95 px-5 text-sm text-zinc-100 shadow-xl backdrop-blur"
+        title="Tampilkan toolbar"
+        className="fixed bottom-6 left-1/2 z-40 flex min-h-[44px] min-w-[44px] -translate-x-1/2 items-center justify-center rounded-full border border-zinc-700 bg-zinc-900/95 text-zinc-100 shadow-xl backdrop-blur"
       >
-        <span aria-hidden="true">▲</span> Navigasi
+        <Icon d={PATHS.show} label="Tampilkan toolbar" />
       </button>
     );
   }
@@ -37,43 +71,63 @@ export default function ReaderBottomPill(props: PillProps) {
         <button
           onClick={() => setVisible(false)}
           aria-label="Sembunyikan toolbar baca"
-          className="flex min-h-[32px] min-w-[64px] items-center justify-center rounded-full border border-zinc-700 bg-zinc-900/95 text-xs text-zinc-400 shadow-lg backdrop-blur"
+          title="Sembunyikan toolbar"
+          className="flex min-h-[32px] min-w-[64px] items-center justify-center rounded-full border border-zinc-700 bg-zinc-900/95 text-zinc-400 shadow-lg backdrop-blur"
         >
-          <span aria-hidden="true">▼</span>
+          <Icon d={PATHS.hide} label="Sembunyikan toolbar" />
         </button>
-        <div className="flex max-w-full flex-wrap items-center justify-center gap-2 rounded-2xl border border-zinc-700 bg-zinc-950/95 px-3 py-2.5 shadow-2xl backdrop-blur">
+        <div
+          className="flex max-w-full items-center justify-center gap-1 rounded-2xl border border-zinc-700 bg-zinc-950/95 px-2 py-2 shadow-2xl backdrop-blur"
+          role="toolbar"
+          aria-label="Navigasi baca"
+        >
           {prevSlug ? (
             <Link
               href={`/chapter/${prevSlug}?manga=${mangaSlug}${proxyQuery}`}
-              className="flex min-h-[44px] items-center rounded-xl px-4 text-sm text-zinc-200 hover:bg-zinc-800"
+              aria-label="Chapter sebelumnya"
+              title="Sebelumnya"
+              className={BTN}
             >
-              Prev
+              <Icon d={PATHS.prev} label="Sebelumnya" />
             </Link>
           ) : (
             <Link
               href={`/manga/${mangaSlug}`}
-              className="flex min-h-[44px] items-center rounded-xl px-4 text-sm text-zinc-200 hover:bg-zinc-800"
+              aria-label="Kembali ke daftar chapter"
+              title="Daftar chapter"
+              className={BTN}
             >
-              Daftar
+              <Icon d={PATHS.list} label="Daftar chapter" />
             </Link>
           )}
           <ChapterDrawer chapters={chapters} mangaSlug={mangaSlug} currentSlug={currentSlug} />
-          <Link
-            href={`?manga=${mangaSlug}${useProxy ? "&proxy=0" : ""}`}
-            aria-pressed={useProxy}
-            title={useProxy ? "Pakai gambar langsung" : "Pakai gambar via proxy"}
-            className="flex min-h-[44px] items-center rounded-xl px-3 text-xs text-zinc-400 hover:bg-zinc-800"
-          >
-            {useProxy ? "Langsung" : "Proxy"}
-          </Link>
           {nextSlug ? (
             <Link
               href={`/chapter/${nextSlug}?manga=${mangaSlug}${proxyQuery}`}
-              className="flex min-h-[44px] items-center rounded-xl bg-amber-400 px-5 text-sm font-semibold text-black"
+              aria-label="Chapter berikutnya"
+              title="Berikutnya"
+              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl bg-amber-400 text-black"
             >
-              Next
+              <Icon d={PATHS.next} label="Berikutnya" />
             </Link>
           ) : null}
+          <Link
+            href={`?manga=${mangaSlug}${useProxy ? "&proxy=0" : ""}`}
+            aria-label={useProxy ? "Pakai gambar langsung" : "Pakai gambar via proxy"}
+            title={useProxy ? "Gambar langsung" : "Gambar via proxy"}
+            aria-pressed={useProxy}
+            className={BTN}
+          >
+            <Icon d={PATHS.zap} label="Sumber gambar" />
+          </Link>
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            aria-label="Kembali ke atas"
+            title="Ke atas"
+            className={BTN}
+          >
+            <Icon d={PATHS.up} label="Ke atas" />
+          </button>
         </div>
       </div>
     </div>
