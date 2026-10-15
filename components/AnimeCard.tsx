@@ -6,16 +6,18 @@ export default function AnimeCard({
   cover,
   meta,
   badge,
+  href,
 }: {
   id: string;
   title: string;
   cover: string;
   meta?: string;
   badge?: string;
+  href?: string;
 }) {
   return (
     <Link
-      href={`/anime/${id}`}
+      href={href ?? `/anime/${id}`}
       className="group block overflow-hidden rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--surface)] transition-colors hover:border-[var(--accent)] focus-visible:border-[var(--accent)]"
     >
       {cover ? (

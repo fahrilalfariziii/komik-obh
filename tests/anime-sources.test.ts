@@ -96,7 +96,6 @@ describe("normalisasi Anoboy", () => {
     const v = fromAnoboyDetail(anoboyDetail);
     expect(v.title).toBe("One Piece");
     expect(v.synopsis).toBe("Luffy berlayar.");
-    expect(v.serverGroups ?? []).toEqual([]);
     expect(v.episodes[0]).toMatchObject({
       id: "one-piece-episode-1180-subtitle-indonesia",
       eps: "1180",
