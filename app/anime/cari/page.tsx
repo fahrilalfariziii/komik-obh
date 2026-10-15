@@ -1,7 +1,7 @@
 import AnimeCard from "@/components/AnimeCard";
 import AnimeSearchForm from "@/components/AnimeSearchForm";
 import StatePanel from "@/components/StatePanel";
-import { searchAnime } from "@/lib/anime";
+import { searchAllAnime, type AnimeResult } from "@/lib/anime-sources";
 import { requireOwner } from "@/lib/gate";
 
 export const metadata = {
@@ -38,16 +38,12 @@ export default async function CariPage({
     );
   }
 
-  let list: Array<{
-    animeId: string;
-    title: string;
-    poster: string;
-    status?: string;
-    score?: string;
-  }> = [];
+  let list: AnimeResult[] = [];
+  let partial = { otakudesu: false, anoboy: false };
   try {
-    const res = await searchAnime(q);
-    list = res.data?.animeList ?? [];
+    const res = await searchAllAnime(q);
+    list = res.results;
+    partial = res.partial;
   } catch (e) {
     return (
       <main className="mx-auto max-w-6xl px-4 pb-28 pt-8 sm:pb-12">
@@ -76,6 +72,12 @@ export default async function CariPage({
         Hasil untuk <span className="text-[var(--accent)]">{q}</span>
       </h1>
       <p className="mt-1 text-sm text-[var(--text-muted)]">{list.length} hasil</p>
+      {partial.otakudesu || partial.anoboy ? (
+        <p role="status" className="mt-2 text-xs text-[var(--text-muted)]">
+          {(partial.otakudesu ? "Otakudesu" : "Anoboy") +
+            " tidak merespons, menampilkan hasil yang tersedia."}
+        </p>
+      ) : null}
       <div className="mt-5">
         <AnimeSearchForm defaultValue={q} />
       </div>
@@ -83,8 +85,8 @@ export default async function CariPage({
         {!list.length ? (
           <StatePanel
             icon="search"
-            title={`Tidak ada hasil untuk "${q}"`}
-            message="Coba ejaan lain atau judul yang lebih singkat."
+            title={`Tidak ada hasil untuk "${q}" di Otakudesu maupun Anoboy`}
+            message="Coba ejaan lain, judul Inggris, atau kata kunci lebih singkat."
             actionLabel="Kembali ke anime"
             actionHref="/anime"
           />
@@ -92,11 +94,13 @@ export default async function CariPage({
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {list.map((a) => (
               <AnimeCard
-                key={a.animeId}
-                id={a.animeId}
+                key={`${a.source}-${a.id}`}
+                id={a.id}
                 title={a.title}
-                cover={a.poster}
-                meta={a.score ? `Skor ${a.score}` : a.status}
+                cover={a.cover}
+                meta={a.meta}
+                badge={a.badge}
+                href={a.detailHref}
               />
             ))}
           </div>
