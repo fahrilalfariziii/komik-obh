@@ -13,6 +13,10 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(signIn);
   }
   return NextResponse.next();
+}, {
+  // Proxy Frontend API Clerk via /__clerk (wajib untuk host *.vercel.app).
+  // Intersepsi terjadi sebelum handler di atas, jadi bypass /__clerk tetap aman.
+  frontendApiProxy: { enabled: true },
 });
 
 export const config = {
