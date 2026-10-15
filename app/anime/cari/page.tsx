@@ -1,7 +1,7 @@
 import AnimeCard from "@/components/AnimeCard";
 import AnimeSearchForm from "@/components/AnimeSearchForm";
 import StatePanel from "@/components/StatePanel";
-import { searchAllAnime, type AnimeResult } from "@/lib/anime-sources";
+import { partialNotice, searchAllAnime, type AnimeResult } from "@/lib/anime-sources";
 import { requireOwner } from "@/lib/gate";
 
 export const metadata = {
@@ -72,12 +72,14 @@ export default async function CariPage({
         Hasil untuk <span className="text-[var(--accent)]">{q}</span>
       </h1>
       <p className="mt-1 text-sm text-[var(--text-muted)]">{list.length} hasil</p>
-      {partial.otakudesu || partial.anoboy ? (
-        <p role="status" className="mt-2 text-xs text-[var(--text-muted)]">
-          {(partial.otakudesu ? "Otakudesu" : "Anoboy") +
-            " tidak merespons, menampilkan hasil yang tersedia."}
-        </p>
-      ) : null}
+      {(() => {
+        const notice = partialNotice(partial, list.length > 0);
+        return notice ? (
+          <p role="status" className="mt-2 text-xs text-[var(--text-muted)]">
+            {notice}
+          </p>
+        ) : null;
+      })()}
       <div className="mt-5">
         <AnimeSearchForm defaultValue={q} />
       </div>

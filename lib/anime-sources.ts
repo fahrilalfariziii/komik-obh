@@ -185,6 +185,22 @@ export function legacySlugTarget(slug: string): string {
   return `/anime/otakudesu/${slug}`;
 }
 
+const sourceName = (s: SourceId) => (s === "otakudesu" ? "Otakudesu" : "Anoboy");
+
+export function partialNotice(
+  partial: Record<SourceId, boolean>,
+  hasResults: boolean
+): string | null {
+  const down = (Object.keys(partial) as SourceId[]).filter((k) => partial[k]);
+  if (down.length === 0) return null;
+  if (down.length > 1) return "Kedua sumber (Otakudesu dan Anoboy) tidak merespons. Coba lagi.";
+  const first = down[0];
+  if (!first) return null;
+  return hasResults
+    ? `${sourceName(first)} tidak merespons, menampilkan hasil yang tersedia.`
+    : `${sourceName(first)} tidak merespons. Coba lagi.`;
+}
+
 async function settle<T>(p: Promise<T>, ms: number): Promise<{ ok: true; v: T } | { ok: false }> {
   let timer: ReturnType<typeof setTimeout>;
   const timeout = new Promise<never>((_, rej) => {
