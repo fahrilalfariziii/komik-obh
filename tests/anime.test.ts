@@ -68,6 +68,10 @@ describe("slugFromAnimeHref", () => {
   it("slug jadwal polos", () => {
     expect(slugFromAnimeHref("doumo-suki-majo-sub-indo")).toBe("doumo-suki-majo-sub-indo");
   });
+  it("membuang query dan hash", () => {
+    expect(slugFromAnimeHref("/anime/anime/foo-sub-indo?x=1")).toBe("foo-sub-indo");
+    expect(slugFromAnimeHref("/anime/anime/foo-sub-indo#ep")).toBe("foo-sub-indo");
+  });
 });
 
 describe("pickStreamUrl", () => {

@@ -92,7 +92,9 @@ export function genreUrl(slug: string, page = 1) {
 }
 
 export function slugFromAnimeHref(href: string): string {
-  return href.replace(/\/+$/, "").split("/").pop() ?? href;
+  const noQuery = href.split("?")[0] ?? href;
+  const clean = noQuery.split("#")[0] ?? noQuery;
+  return clean.replace(/\/+$/, "").split("/").pop() ?? href;
 }
 
 export function pickStreamUrl(defaultUrl: string, resolvedUrl: string, serverId: string): string {

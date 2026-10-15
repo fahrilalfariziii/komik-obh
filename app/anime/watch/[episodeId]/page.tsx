@@ -59,6 +59,14 @@ export default async function WatchPage({
         trail={[{ label: "Beranda", href: "/" }, { label: "Anime", href: "/anime" }, { label: ep.title }]}
       />
       <h1 className="mt-4 line-clamp-2 text-xl font-bold tracking-tight">{ep.title}</h1>
+      <p className="mt-2">
+        <Link
+          href={`/anime/${ep.animeId}`}
+          className="text-xs text-[var(--text-muted)] hover:text-[var(--accent)] hover:underline"
+        >
+          ← Detail anime
+        </Link>
+      </p>
       <div className="mt-4">
         <AnimePlayer streamUrl={streamUrl} title={ep.title} />
       </div>

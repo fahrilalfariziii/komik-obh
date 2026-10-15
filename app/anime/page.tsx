@@ -78,7 +78,7 @@ export default async function AnimeHome() {
           </Link>
         </div>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
-          {ongoing.slice(0, 10).map((a) => (
+          {ongoing.slice(0, 12).map((a) => (
             <AnimeCard
               key={a.animeId}
               id={a.animeId}

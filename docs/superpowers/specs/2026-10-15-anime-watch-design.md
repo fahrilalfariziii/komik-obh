@@ -72,8 +72,8 @@ Dibuat:
 
 Diubah (minimal):
 - `components/Icon.tsx` — tambah ikon `play` (satu path, stroke 1.75).
-- `components/Navbar.tsx` — tambah tab `{ href: "/anime", label: "Anime", icon: "play" }`.
-- `components/BottomNav.tsx` — tambah tab Anime; `grid-cols-3` → `grid-cols-4`.
+- `components/Navbar.tsx` — tambah tab `{ href: "/anime", label: "Anime", icon: "play" }` di antara Beranda dan Peringkat. Catatan: keadaan akhir nav mengikuti redesign komik yang sedang berjalan di working tree (tab Peringkat sudah ada sebelum task anime; link "Cari Komik" tidak ada — form search hanya tampil di `md+`, BottomNav "Cari" menutup celah di layar kecil).
+- `components/BottomNav.tsx` — tambah tab Anime; grid menjadi `grid-cols-4` (Beranda/Anime/Peringkat/Cari).
 - `app/layout.tsx` — tidak wajib diubah (preconnect sankavollerei sudah ada). Opsional: tambah `metadata` per halaman anime.
 
 Tidak diubah: seluruh route komik (`/`, `/manga/*`, `/chapter/*`, `/search`, `/peringkat`), `lib/sanka.ts`, `MangaCard`, `HeroSearch`.
