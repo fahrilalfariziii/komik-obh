@@ -1,33 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function PageImage({ src, index, eager }: { src: string; index: number; eager: boolean }) {
   const [failed, setFailed] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [retry, setRetry] = useState(0);
+
   if (failed) {
     return (
-      <div className="flex min-h-64 flex-col items-center justify-center gap-2 border-b border-zinc-900 p-8 text-sm">
-        <p className="text-zinc-300">Halaman {index + 1} gagal dimuat.</p>
+      <div className="mx-auto flex min-h-64 w-full max-w-3xl flex-col items-center justify-center gap-3 p-8 text-sm">
+        <p className="text-[var(--text)]">Halaman {index + 1} gagal dimuat.</p>
         <button
+          type="button"
           onClick={() => {
             setFailed(false);
             setRetry((r) => r + 1);
           }}
-          className="flex min-h-[44px] items-center rounded-md bg-amber-400 px-5 text-sm font-medium text-black"
+          className="flex min-h-[44px] items-center gap-2 rounded-[var(--radius-control)] bg-[var(--accent)] px-5 text-sm font-semibold text-[var(--accent-ink)]"
         >
           Coba lagi
         </button>
       </div>
     );
   }
+
   return (
     <div className="relative mx-auto w-full max-w-3xl">
       {!loaded ? (
         <div
           aria-hidden="true"
-          className="absolute inset-0 min-h-64 animate-pulse bg-zinc-900"
+          className="absolute inset-0 min-h-64 animate-pulse bg-[var(--surface)]"
         />
       ) : null}
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -49,22 +52,50 @@ function PageImage({ src, index, eager }: { src: string; index: number; eager: b
 }
 
 export default function ReaderView({ pages }: { pages: string[] }) {
-  const [read, setRead] = useState(0);
+  const [current, setCurrent] = useState(1);
+  const refs = useRef<Array<HTMLDivElement | null>>([]);
+
+  // Lacak halaman yang sedang terlihat untuk indikator posisi baca.
+  useEffect(() => {
+    if (!pages.length) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const idx = refs.current.findIndex((el) => el === entry.target);
+            if (idx >= 0) setCurrent(idx + 1);
+          }
+        }
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: 0 }
+    );
+    refs.current.forEach((el) => el && observer.observe(el));
+    return () => observer.disconnect();
+  }, [pages.length]);
+
   if (!pages.length) {
-    return <p className="p-8 text-center text-sm text-zinc-400">Tidak ada gambar.</p>;
+    return <p className="p-8 text-center text-sm text-[var(--text-muted)]">Tidak ada gambar.</p>;
   }
-  const pct = Math.round(((read + 1) / pages.length) * 100);
+
+  const pct = Math.round((current / pages.length) * 100);
+
   return (
     <div>
-      <div className="reader-stage">
+      <div className="reader-stage flex flex-col py-2">
         {pages.map((src, i) => (
-          <div key={src} onClick={() => setRead(i)}>
+          <div
+            key={src}
+            ref={(el) => {
+              refs.current[i] = el;
+            }}
+          >
             <PageImage src={src} index={i} eager={i < 3} />
           </div>
         ))}
       </div>
-      <p className="p-4 text-center text-xs text-zinc-500">
-        {read + 1} / {pages.length} ({pct}%)
+      <p className="p-4 text-center text-xs text-[var(--text-muted)]" aria-live="polite">
+        Halaman <span className="tabular-nums text-[var(--text)]">{current}</span> dari{" "}
+        {pages.length} <span className="tabular-nums">({pct}%)</span>
       </p>
     </div>
   );

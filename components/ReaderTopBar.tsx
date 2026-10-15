@@ -1,13 +1,17 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
+import Icon from "@/components/Icon";
 
 export default function ReaderTopBar({
   mangaTitle,
   chapterTitle,
+  mangaSlug,
 }: {
   mangaTitle: string;
   chapterTitle: string;
+  mangaSlug: string;
 }) {
   const [hidden, setHidden] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -18,7 +22,7 @@ export default function ReaderTopBar({
       const y = window.scrollY;
       const max = document.documentElement.scrollHeight - window.innerHeight;
       setProgress(max > 0 ? Math.min(100, Math.round((y / max) * 100)) : 0);
-      setHidden(y > 120 && y > lastY);
+      setHidden(y > 140 && y > lastY);
       lastY = y;
     };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -31,12 +35,29 @@ export default function ReaderTopBar({
         hidden ? "-translate-y-full" : "translate-y-0"
       }`}
     >
-      <div className="mx-auto max-w-3xl bg-zinc-950/85 px-4 pb-2 pt-2.5 text-center backdrop-blur">
-        <p className="truncate text-sm font-semibold text-zinc-50">{mangaTitle}</p>
-        <p className="text-xs text-amber-300">{chapterTitle}</p>
+      <div className="bg-black/85 backdrop-blur">
+        <div className="mx-auto flex max-w-3xl items-center gap-2 px-3 py-1.5">
+          <Link
+            href={`/manga/${mangaSlug}`}
+            aria-label="Kembali ke daftar chapter"
+            className="flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-[var(--radius-control)] text-[var(--text)] transition-colors hover:bg-white/10"
+          >
+            <Icon name="chevronLeft" size={20} />
+          </Link>
+          <div className="min-w-0 flex-1 text-center">
+            <p className="truncate text-sm font-semibold text-[var(--text)]">{mangaTitle}</p>
+            <p className="truncate text-xs text-[var(--accent)]">{chapterTitle}</p>
+          </div>
+          <span
+            className="flex min-w-[44px] shrink-0 items-center justify-end text-xs font-medium text-[var(--text-muted)] tabular-nums"
+            aria-hidden="true"
+          >
+            {progress}%
+          </span>
+        </div>
       </div>
-      <div className="mx-auto h-0.5 max-w-3xl bg-zinc-800" aria-hidden="true">
-        <div className="h-full bg-amber-400" style={{ width: `${progress}%` }} />
+      <div className="h-0.5 w-full bg-white/10" aria-hidden="true">
+        <div className="h-full bg-[var(--accent)] transition-[width]" style={{ width: `${progress}%` }} />
       </div>
     </div>
   );

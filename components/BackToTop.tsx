@@ -1,36 +1,33 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Icon from "@/components/Icon";
 
 export default function BackToTop() {
-  const [show, setShow] = useState(false);
+  // Cek posisi saat mount agar tombol tetap benar bila halaman dibuka
+  // dalam keadaan sudah tergulir (mis. lewat tautan ke anchor).
+  const [show, setShow] = useState(
+    () => typeof window !== "undefined" && window.scrollY > 1200
+  );
+
   useEffect(() => {
     const onScroll = () => setShow(window.scrollY > 1200);
     window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
   if (!show) return null;
+
   return (
     <button
+      type="button"
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       aria-label="Kembali ke atas"
-      title="Ke atas"
-      className="fixed bottom-32 right-4 z-40 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-zinc-700 bg-zinc-900/95 text-zinc-100 shadow-xl backdrop-blur sm:bottom-8"
+      title="Kembali ke atas"
+      className="fixed bottom-40 right-4 z-40 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-[var(--border-strong)] bg-[var(--app-bg)]/95 text-[var(--text)] shadow-[0_10px_30px_-12px_rgba(0,0,0,0.9)] backdrop-blur sm:bottom-32"
     >
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        role="img"
-        aria-label="Ke atas"
-      >
-        <path d="M12 19V5M5 12l7-7 7 7" />
-      </svg>
+      <Icon name="arrowUp" size={19} />
     </button>
   );
 }

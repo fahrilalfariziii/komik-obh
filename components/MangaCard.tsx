@@ -5,28 +5,53 @@ export default function MangaCard({
   title,
   cover,
   status,
+  type,
 }: {
   id: string;
   title: string;
   cover: string;
   status?: string;
+  type?: string;
 }) {
+  const hasMeta = Boolean(status || type);
+
   return (
     <Link
       href={`/manga/${id}`}
-      className="group overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900"
+      className="group block overflow-hidden rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--surface)] transition-colors hover:border-[var(--accent)] focus-visible:border-[var(--accent)]"
     >
       {cover ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={cover} alt={title} loading="lazy" className="aspect-[3/4] w-full object-cover" />
+        <img
+          src={cover}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="aspect-[3/4] w-full object-cover"
+        />
       ) : (
-        <div className="flex aspect-[3/4] items-center justify-center text-xs text-zinc-500">
+        <div className="flex aspect-[3/4] items-center justify-center bg-[var(--surface-raised)] text-xs text-[var(--text-muted)]">
           Tanpa cover
         </div>
       )}
-      <div className="p-3">
-        <p className="line-clamp-2 text-sm font-medium text-zinc-100">{title}</p>
-        {status ? <p className="mt-1 text-xs text-zinc-400">{status}</p> : null}
+      <div className="border-t border-[var(--border)] p-3">
+        <p className="line-clamp-2 min-h-[2.5rem] text-sm font-medium leading-snug text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">
+          {title}
+        </p>
+        {hasMeta ? (
+          <div className="mt-2 flex items-center justify-between gap-2 text-xs">
+            {status ? (
+              <span className="truncate text-[var(--text-muted)]">{status}</span>
+            ) : (
+              <span />
+            )}
+            {type ? (
+              <span className="shrink-0 rounded-full border border-[var(--border-strong)] px-2 py-0.5 text-[0.7rem] text-[var(--text-muted)]">
+                {type}
+              </span>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </Link>
   );

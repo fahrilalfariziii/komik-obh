@@ -3,36 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import ChapterDrawer from "@/components/ChapterDrawer";
+import Icon from "@/components/Icon";
 import type { SankaChapterEntry } from "@/lib/sanka";
-
-function Icon({ d, label }: { d: string; label: string }) {
-  return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      role="img"
-      aria-label={label}
-    >
-      <path d={d} />
-    </svg>
-  );
-}
-
-const PATHS = {
-  prev: "M15 18l-6-6 6-6",
-  next: "M9 18l6-6-6-6",
-  list: "M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01",
-  book: "M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z",
-  zap: "M13 2 3 14h9l-1 8 10-12h-9l1-8z",
-  hide: "M6 9l6 6 6-6",
-  show: "M18 15l-6-6-6 6",
-};
 
 type BarProps = {
   mangaSlug: string;
@@ -44,7 +16,7 @@ type BarProps = {
 };
 
 const ICON_BTN =
-  "flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-zinc-200 hover:bg-zinc-800";
+  "flex min-h-[44px] min-w-[44px] items-center justify-center rounded-[var(--radius-control)] text-[var(--text)] transition-colors hover:bg-[var(--surface-raised)]";
 
 export default function ReaderBottomBar(props: BarProps) {
   const { mangaSlug, useProxy, prevSlug, nextSlug, chapters, currentSlug } = props;
@@ -54,29 +26,29 @@ export default function ReaderBottomBar(props: BarProps) {
   if (!visible) {
     return (
       <button
+        type="button"
         onClick={() => setVisible(true)}
-        aria-label="Tampilkan toolbar baca"
-        title="Tampilkan toolbar"
-        className="fixed bottom-6 left-1/2 z-40 flex min-h-[44px] min-w-[44px] -translate-x-1/2 items-center justify-center rounded-full border border-zinc-700 bg-zinc-900/95 text-zinc-100 shadow-xl backdrop-blur"
+        aria-label="Tampilkan kontrol baca"
+        className="fixed bottom-6 left-1/2 z-40 flex min-h-[44px] min-w-[44px] -translate-x-1/2 items-center justify-center rounded-full border border-[var(--border-strong)] bg-[var(--app-bg)]/95 text-[var(--text)] shadow-[0_10px_30px_-12px_rgba(0,0,0,0.9)] backdrop-blur"
       >
-        <Icon d={PATHS.show} label="Tampilkan toolbar" />
+        <Icon name="caretRightFilled" size={18} className="rotate-90" />
       </button>
     );
   }
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
-      <div className="mx-auto flex max-w-3xl flex-col items-center gap-1.5">
+      <div className="mx-auto flex max-w-2xl flex-col items-center gap-1.5">
         <button
+          type="button"
           onClick={() => setVisible(false)}
-          aria-label="Sembunyikan toolbar baca"
-          title="Sembunyikan toolbar"
-          className="flex min-h-[32px] min-w-[64px] items-center justify-center rounded-full border border-zinc-700 bg-zinc-900/95 text-zinc-400 shadow-lg backdrop-blur"
+          aria-label="Sembunyikan kontrol baca"
+          className="flex min-h-[32px] min-w-[64px] items-center justify-center rounded-full border border-[var(--border-strong)] bg-[var(--app-bg)]/95 text-[var(--text-muted)] backdrop-blur"
         >
-          <Icon d={PATHS.hide} label="Sembunyikan toolbar" />
+          <Icon name="eyeOff" size={16} />
         </button>
         <div
-          className="flex w-full items-center justify-between gap-1 rounded-2xl border border-zinc-700 bg-zinc-950/95 px-2 py-2 shadow-2xl backdrop-blur"
+          className="flex w-full items-center justify-between gap-1 rounded-[var(--radius-card)] border border-[var(--border-strong)] bg-[var(--app-bg)]/95 px-2 py-1.5 backdrop-blur"
           role="toolbar"
           aria-label="Navigasi baca"
         >
@@ -85,10 +57,10 @@ export default function ReaderBottomBar(props: BarProps) {
               href={`/chapter/${prevSlug}?manga=${mangaSlug}${proxyQuery}`}
               aria-label="Chapter sebelumnya"
               title="Sebelumnya"
-              className="flex min-h-[44px] items-center gap-1 rounded-xl px-3 text-sm text-zinc-200 hover:bg-zinc-800"
+              className="flex min-h-[44px] items-center gap-1.5 rounded-[var(--radius-control)] px-2.5 text-sm text-[var(--text)] transition-colors hover:bg-[var(--surface-raised)] sm:px-3"
             >
-              <Icon d={PATHS.prev} label="Sebelumnya" />
-              <span className="hidden sm:inline">Prev</span>
+              <Icon name="caretLeftFilled" size={16} />
+              <span className="hidden sm:inline">Sebelumnya</span>
             </Link>
           ) : (
             <Link
@@ -97,30 +69,32 @@ export default function ReaderBottomBar(props: BarProps) {
               title="Daftar chapter"
               className={ICON_BTN}
             >
-              <Icon d={PATHS.list} label="Daftar chapter" />
+              <Icon name="layers" size={19} />
             </Link>
           )}
-          <div className="flex items-center gap-1">
+
+          <div className="flex items-center gap-0.5">
             <ChapterDrawer chapters={chapters} mangaSlug={mangaSlug} currentSlug={currentSlug} />
             <Link
               href={`?manga=${mangaSlug}${useProxy ? "&proxy=0" : ""}`}
-              aria-label={useProxy ? "Pakai gambar langsung" : "Pakai gambar via proxy"}
-              title={useProxy ? "Gambar langsung" : "Gambar via proxy"}
+              aria-label={useProxy ? "Ganti ke gambar langsung" : "Ganti ke gambar via proxy"}
+              title={useProxy ? "Sumber: proxy" : "Sumber: langsung"}
               aria-pressed={useProxy}
-              className={ICON_BTN}
+              className={`${ICON_BTN} ${useProxy ? "text-[var(--accent)]" : ""}`}
             >
-              <Icon d={PATHS.zap} label="Sumber gambar" />
+              <Icon name={useProxy ? "shieldOn" : "refresh"} size={19} />
             </Link>
           </div>
+
           {nextSlug ? (
             <Link
               href={`/chapter/${nextSlug}?manga=${mangaSlug}${proxyQuery}`}
               aria-label="Chapter berikutnya"
               title="Berikutnya"
-              className="flex min-h-[44px] items-center gap-1 rounded-xl bg-amber-400 px-3 text-sm font-semibold text-black"
+              className="flex min-h-[44px] items-center gap-1.5 rounded-[var(--radius-control)] bg-[var(--accent)] px-2.5 text-sm font-semibold text-[var(--accent-ink)] transition-colors hover:bg-[var(--accent-hover)] sm:px-3"
             >
-              <span className="hidden sm:inline">Next</span>
-              <Icon d={PATHS.next} label="Berikutnya" />
+              <span className="hidden sm:inline">Berikutnya</span>
+              <Icon name="caretRightFilled" size={16} />
             </Link>
           ) : (
             <Link
@@ -129,7 +103,7 @@ export default function ReaderBottomBar(props: BarProps) {
               title="Daftar chapter"
               className={ICON_BTN}
             >
-              <Icon d={PATHS.list} label="Daftar chapter" />
+              <Icon name="layers" size={19} />
             </Link>
           )}
         </div>
