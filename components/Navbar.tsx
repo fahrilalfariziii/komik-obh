@@ -8,6 +8,7 @@ import Icon from "@/components/Icon";
 const NAV = [
   { href: "/", label: "Beranda", icon: "home" as const },
   { href: "/anime", label: "Anime", icon: "play" as const },
+  { href: "/drakor", label: "Drakor", icon: "film" as const },
   { href: "/peringkat", label: "Peringkat", icon: "trophy" as const },
 ];
 
