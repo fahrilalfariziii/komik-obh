@@ -20,7 +20,7 @@ vi.mock("@/lib/gate", () => ({
   },
 }));
 
-import LegacySlugRedirect from "../app/anime/[slug]/page";
+import LegacySlugRedirect from "../app/anime/[source]/page";
 import LegacyWatchRedirect from "../app/anime/watch/[episodeId]/page";
 
 beforeEach(() => {
@@ -56,14 +56,14 @@ describe("partialNotice", () => {
 describe("legacy slug redirect", () => {
   it("gate dulu lalu redirect permanen ke prefix", async () => {
     await expect(
-      LegacySlugRedirect({ params: Promise.resolve({ slug: "x-id" }) })
+      LegacySlugRedirect({ params: Promise.resolve({ source: "x-id" }) })
     ).rejects.toThrow("NEXT_REDIRECT");
     expect(stores.ownerCalls).toBe(1);
     expect(stores.redirects).toEqual([{ url: "/anime/otakudesu/x-id", type: "replace" }]);
   });
   it("slug id sumber ke /anime permanen", async () => {
     await expect(
-      LegacySlugRedirect({ params: Promise.resolve({ slug: "anoboy" }) })
+      LegacySlugRedirect({ params: Promise.resolve({ source: "anoboy" }) })
     ).rejects.toThrow("NEXT_REDIRECT");
     expect(stores.redirects).toEqual([{ url: "/anime", type: "replace" }]);
   });
