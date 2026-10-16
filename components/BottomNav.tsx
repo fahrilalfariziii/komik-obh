@@ -8,6 +8,7 @@ const ITEMS = [
   { href: "/", label: "Beranda", icon: "home" as const },
   { href: "/anime", label: "Anime", icon: "play" as const },
   { href: "/drakor", label: "Drakor", icon: "film" as const },
+  { href: "/movie", label: "Movie", icon: "clapper" as const },
   { href: "/peringkat", label: "Peringkat", icon: "trophy" as const },
   { href: "/search", label: "Cari", icon: "search" as const },
 ];
@@ -24,7 +25,7 @@ export default function BottomNav() {
       aria-label="Navigasi bawah"
       className="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--border)] bg-[var(--app-bg)]/95 pb-[env(safe-area-inset-bottom)] backdrop-blur sm:hidden"
     >
-      <div className="grid grid-cols-5">
+      <div className="grid grid-cols-6">
         {ITEMS.map((item) => {
           const active = isActive(item.href);
           return (
@@ -32,12 +33,12 @@ export default function BottomNav() {
               key={item.href}
               href={item.href}
               aria-current={active ? "page" : undefined}
-              className={`flex min-h-[56px] flex-col items-center justify-center gap-1 text-xs transition-colors ${
+              className={`flex min-h-[56px] flex-col items-center justify-center gap-1 px-0.5 text-[0.65rem] transition-colors ${
                 active ? "text-[var(--accent)]" : "text-[var(--text-muted)]"
               }`}
             >
               <Icon name={item.icon} size={20} />
-              {item.label}
+              <span className="w-full truncate text-center">{item.label}</span>
             </Link>
           );
         })}
