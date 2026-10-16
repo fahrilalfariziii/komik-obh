@@ -8,6 +8,10 @@ import {
   networkUrl,
   resolvePlayableUrl,
   seriesUrl,
+  genreNames,
+  kindLabel,
+  tmdbUrl,
+  yearOf,
 } from "../lib/movie";
 
 afterEach(() => {
@@ -90,5 +94,25 @@ describe("resolvePlayableUrl", () => {
   it("tanpa m3u8 melempar", async () => {
     stubFetch(() => ({ hello: "world" }));
     await expect(resolvePlayableUrl("https://proxy/cfg")).rejects.toThrow("m3u8");
+  });
+});
+
+describe("helper tampilan", () => {
+  it("tmdbUrl menormalkan path relatif", () => {
+    expect(tmdbUrl("/logo.png")).toBe("https://image.tmdb.org/t/p/w500/logo.png");
+    expect(tmdbUrl("https://image.tmdb.org/t/p/w500/x.jpg")).toBe(
+      "https://image.tmdb.org/t/p/w500/x.jpg"
+    );
+    expect(tmdbUrl(null)).toBe("");
+  });
+  it("genreNames menerima bentuk campuran", () => {
+    expect(genreNames([{ name: "Action" }, "Drama", { name: "  " }])).toEqual(["Action", "Drama"]);
+    expect(genreNames(undefined)).toEqual([]);
+  });
+  it("kindLabel dan yearOf", () => {
+    expect(kindLabel("tv_series")).toBe("Series");
+    expect(kindLabel("movie")).toBe("Film");
+    expect(yearOf("2026-10-13")).toBe("2026");
+    expect(yearOf(null)).toBe("");
   });
 });

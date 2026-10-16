@@ -167,6 +167,31 @@ export const LIST_SORTS = [
   { code: "latest", label: "Terbaru" },
 ] as const;
 
+const TMDB = "https://image.tmdb.org/t/p";
+
+/** API kadang mengembalikan path relatif (mis. logoPath); normalkan ke URL penuh. */
+export function tmdbUrl(path: string | null | undefined, size = "w500") {
+  if (!path) return "";
+  return path.startsWith("http") ? path : `${TMDB}/${size}${path}`;
+}
+
+/** Ambil nama-nama genre dari bentuk campuran (string atau objek). */
+export function genreNames(genres?: Array<{ name?: string } | string>): string[] {
+  if (!genres?.length) return [];
+  return genres
+    .map((g) => (typeof g === "string" ? g : g?.name ?? ""))
+    .map((g) => g.trim())
+    .filter(Boolean);
+}
+
+export function kindLabel(contentType?: string): string {
+  return contentType === "tv_series" ? "Series" : "Film";
+}
+
+export function yearOf(date?: string | null): string {
+  return (date ?? "").slice(0, 4);
+}
+
 export function homeUrl() {
   return `${MOVIE_BASE}/home`;
 }
