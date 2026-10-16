@@ -3,7 +3,7 @@ import MovieCard from "@/components/MovieCard";
 import MovieHero from "@/components/MovieHero";
 import StatePanel from "@/components/StatePanel";
 import Icon from "@/components/Icon";
-import { NETWORKS, getHome } from "@/lib/movie";
+import { NETWORKS, getHome, type MovieHome } from "@/lib/movie";
 import { requireOwner } from "@/lib/gate";
 
 export const metadata = {
@@ -14,7 +14,7 @@ export const metadata = {
 export default async function MovieHome() {
   await requireOwner();
 
-  let data;
+  let data: MovieHome;
   try {
     data = await getHome();
   } catch (e) {
