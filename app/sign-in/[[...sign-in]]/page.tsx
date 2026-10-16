@@ -12,7 +12,7 @@ export default function SignInPage() {
         Komik<span className="text-[var(--accent)]">Reader</span>
       </h1>
       <p className="mb-6 mt-1 text-center text-sm text-[var(--text-muted)]">
-        Masuk dengan akun pemilik untuk lanjut membaca.
+        Masuk dengan akun terdaftar untuk lanjut membaca.
       </p>
       <SignIn appearance={{ ...dark, variables: { colorPrimary: "#fbbf24" } }} />
     </main>

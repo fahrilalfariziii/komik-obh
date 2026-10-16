@@ -3,7 +3,6 @@ import RankRow from "@/components/RankRow";
 import StatePanel from "@/components/StatePanel";
 import Icon from "@/components/Icon";
 import { getLatest, getPopular, slugFromLink } from "@/lib/sanka";
-import { requireOwner } from "@/lib/gate";
 
 export const metadata: Metadata = {
   title: "Peringkat Komik",
@@ -11,8 +10,6 @@ export const metadata: Metadata = {
 };
 
 export default async function PeringkatPage() {
-  await requireOwner();
-
   const [popularResult, latestResult] = await Promise.allSettled([getPopular(), getLatest()]);
   const popular = popularResult.status === "fulfilled" ? popularResult.value.comics ?? [] : [];
   const latest = latestResult.status === "fulfilled" ? latestResult.value.comics ?? [] : [];

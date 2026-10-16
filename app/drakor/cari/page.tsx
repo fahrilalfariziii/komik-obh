@@ -3,7 +3,6 @@ import DrakorCard from "@/components/DrakorCard";
 import DrakorSearchForm from "@/components/DrakorSearchForm";
 import StatePanel from "@/components/StatePanel";
 import { searchDrakor, type DrakorSearchItem } from "@/lib/drakor";
-import { requireOwner } from "@/lib/gate";
 
 export const metadata = {
   title: "Cari Drakor",
@@ -20,7 +19,6 @@ export default async function CariPage({
 }: {
   searchParams: Promise<{ q?: string; page?: string }>;
 }) {
-  await requireOwner();
   const sp = await searchParams;
   const q = (sp.q ?? "").trim();
   const page = normPage(sp.page);

@@ -5,10 +5,8 @@ import StatePanel from "@/components/StatePanel";
 import Icon from "@/components/Icon";
 import { komikType } from "@/lib/komik-type";
 import { getComicDetail } from "@/lib/sanka";
-import { requireOwner } from "@/lib/gate";
 
 export default async function MangaPage({ params }: { params: Promise<{ id: string }> }) {
-  await requireOwner();
   const { id } = await params;
 
   let detail;

@@ -3,7 +3,6 @@ import MovieListBody from "@/components/MovieListBody";
 import StatePanel from "@/components/StatePanel";
 import Icon from "@/components/Icon";
 import { LIST_SORTS, getFilters, getMovies, type MovieItem } from "@/lib/movie";
-import { requireOwner } from "@/lib/gate";
 
 export const metadata = {
   title: "Jelajahi Film",
@@ -20,7 +19,6 @@ export default async function FilmListPage({
 }: {
   searchParams: Promise<{ page?: string; genre?: string; sort?: string }>;
 }) {
-  await requireOwner();
   const sp = await searchParams;
   const page = normPage(sp.page);
   const genre = (sp.genre ?? "").trim();

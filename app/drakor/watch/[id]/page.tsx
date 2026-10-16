@@ -4,7 +4,6 @@ import DrakorPlayer from "@/components/DrakorPlayer";
 import StatePanel from "@/components/StatePanel";
 import Icon from "@/components/Icon";
 import { getDetail, playDrakor } from "@/lib/drakor";
-import { requireOwner } from "@/lib/gate";
 
 function normEpisode(v?: string) {
   const n = Number.parseInt(v ?? "1", 10);
@@ -18,7 +17,6 @@ export default async function WatchPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ episode?: string }>;
 }) {
-  await requireOwner();
   const { id } = await params;
   const sp = await searchParams;
 

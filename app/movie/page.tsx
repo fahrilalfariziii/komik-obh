@@ -4,7 +4,6 @@ import MovieHero from "@/components/MovieHero";
 import StatePanel from "@/components/StatePanel";
 import Icon from "@/components/Icon";
 import { NETWORKS, getHome, type MovieHome } from "@/lib/movie";
-import { requireOwner } from "@/lib/gate";
 
 export const metadata = {
   title: "Nonton Film & Series",
@@ -12,8 +11,6 @@ export const metadata = {
 };
 
 export default async function MovieHome() {
-  await requireOwner();
-
   let data: MovieHome;
   try {
     data = await getHome();

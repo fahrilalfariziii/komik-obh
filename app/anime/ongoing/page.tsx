@@ -3,7 +3,6 @@ import AnimeCard from "@/components/AnimeCard";
 import StatePanel from "@/components/StatePanel";
 import Icon from "@/components/Icon";
 import { getOngoing } from "@/lib/anime";
-import { requireOwner } from "@/lib/gate";
 
 export const metadata = {
   title: "Anime Ongoing",
@@ -20,7 +19,6 @@ export default async function OngoingPage({
 }: {
   searchParams: Promise<{ page?: string }>;
 }) {
-  await requireOwner();
   const sp = await searchParams;
   const page = normPage(sp.page);
 

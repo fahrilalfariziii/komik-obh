@@ -3,14 +3,12 @@ import Breadcrumb from "@/components/Breadcrumb";
 import StatePanel from "@/components/StatePanel";
 import Icon from "@/components/Icon";
 import { getDetail } from "@/lib/drakor";
-import { requireOwner } from "@/lib/gate";
 
 export default async function DrakorDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await requireOwner();
   const { id } = await params;
 
   let d;

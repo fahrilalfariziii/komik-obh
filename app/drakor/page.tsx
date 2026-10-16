@@ -4,7 +4,6 @@ import DrakorSearchForm from "@/components/DrakorSearchForm";
 import StatePanel from "@/components/StatePanel";
 import Icon from "@/components/Icon";
 import { getOngoing, getTerbaru, getTrending } from "@/lib/drakor";
-import { requireOwner } from "@/lib/gate";
 
 export const metadata = {
   title: "Nonton Drakor",
@@ -14,7 +13,6 @@ export const metadata = {
 const clean = (s?: string) => (s ?? "").replace(/\s+/g, " ").trim() || undefined;
 
 export default async function DrakorHome() {
-  await requireOwner();
   const [ongoing, trending, terbaru] = await Promise.allSettled([
     getOngoing(1),
     getTrending(),

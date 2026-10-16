@@ -10,14 +10,12 @@ import {
   getOtakudesuDetail,
   isSourceId,
 } from "@/lib/anime-sources";
-import { requireOwner } from "@/lib/gate";
 
 export default async function AnimeDetailPage({
   params,
 }: {
   params: Promise<{ source: string; slug: string }>;
 }) {
-  await requireOwner();
   const { source, slug } = await params;
 
   if (!isSourceId(source)) {

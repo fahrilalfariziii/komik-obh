@@ -7,11 +7,8 @@ import HeroSearch from "@/components/HeroSearch";
 import StatePanel from "@/components/StatePanel";
 import Icon from "@/components/Icon";
 import { getLatest, getPopular, slugFromLink } from "@/lib/sanka";
-import { requireOwner } from "@/lib/gate";
 
 export default async function Home() {
-  await requireOwner();
-
   const [popularResult, latestResult] = await Promise.allSettled([getPopular(), getLatest()]);
   const popular = popularResult.status === "fulfilled" ? popularResult.value.comics ?? [] : [];
   const latest = latestResult.status === "fulfilled" ? latestResult.value.comics ?? [] : [];

@@ -3,7 +3,6 @@ import Breadcrumb from "@/components/Breadcrumb";
 import DrakorCard from "@/components/DrakorCard";
 import StatePanel from "@/components/StatePanel";
 import { getKategoriDetail, type DrakorItem } from "@/lib/drakor";
-import { requireOwner } from "@/lib/gate";
 
 function normPage(v?: string) {
   const n = Number.parseInt(v ?? "1", 10);
@@ -17,7 +16,6 @@ export default async function KategoriDetailPage({
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ page?: string }>;
 }) {
-  await requireOwner();
   const { slug } = await params;
   const sp = await searchParams;
   const page = normPage(sp.page);

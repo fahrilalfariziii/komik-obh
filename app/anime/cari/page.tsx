@@ -2,7 +2,6 @@ import AnimeCard from "@/components/AnimeCard";
 import AnimeSearchForm from "@/components/AnimeSearchForm";
 import StatePanel from "@/components/StatePanel";
 import { partialNotice, searchAllAnime, type AnimeResult } from "@/lib/anime-sources";
-import { requireOwner } from "@/lib/gate";
 
 export const metadata = {
   title: "Cari Anime",
@@ -14,7 +13,6 @@ export default async function CariPage({
 }: {
   searchParams: Promise<{ q?: string }>;
 }) {
-  await requireOwner();
   const sp = await searchParams;
   const q = (sp.q ?? "").trim();
 

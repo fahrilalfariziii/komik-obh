@@ -3,7 +3,6 @@ import AnimeCard from "@/components/AnimeCard";
 import StatePanel from "@/components/StatePanel";
 import Icon from "@/components/Icon";
 import { getComplete } from "@/lib/anime";
-import { requireOwner } from "@/lib/gate";
 
 export const metadata = {
   title: "Anime Tamat",
@@ -20,7 +19,6 @@ export default async function TamatPage({
 }: {
   searchParams: Promise<{ page?: string }>;
 }) {
-  await requireOwner();
   const sp = await searchParams;
   const page = normPage(sp.page);
 

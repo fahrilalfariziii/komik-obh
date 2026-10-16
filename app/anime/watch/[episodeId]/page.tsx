@@ -1,5 +1,4 @@
 import { redirect, RedirectType } from "next/navigation";
-import { requireOwner } from "@/lib/gate";
 
 export default async function LegacyWatchRedirect({
   params,
@@ -8,7 +7,6 @@ export default async function LegacyWatchRedirect({
   params: Promise<{ episodeId: string }>;
   searchParams: Promise<{ server?: string; quality?: string }>;
 }) {
-  await requireOwner();
   const { episodeId } = await params;
   const sp = await searchParams;
   const qs = new URLSearchParams({

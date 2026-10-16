@@ -3,7 +3,6 @@ import { partialNotice } from "../lib/anime-sources";
 
 const stores = vi.hoisted(() => ({
   redirects: [] as Array<{ url: string; type?: string }>,
-  ownerCalls: 0,
 }));
 
 vi.mock("next/navigation", () => ({
@@ -14,18 +13,11 @@ vi.mock("next/navigation", () => ({
   RedirectType: { push: "push", replace: "replace" },
 }));
 
-vi.mock("@/lib/gate", () => ({
-  requireOwner: async () => {
-    stores.ownerCalls++;
-  },
-}));
-
 import LegacySlugRedirect from "../app/anime/[source]/page";
 import LegacyWatchRedirect from "../app/anime/watch/[episodeId]/page";
 
 beforeEach(() => {
   stores.redirects = [];
-  stores.ownerCalls = 0;
 });
 
 describe("partialNotice", () => {
@@ -54,11 +46,10 @@ describe("partialNotice", () => {
 });
 
 describe("legacy slug redirect", () => {
-  it("gate dulu lalu redirect permanen ke prefix", async () => {
+  it("redirect permanen ke prefix", async () => {
     await expect(
       LegacySlugRedirect({ params: Promise.resolve({ source: "x-id" }) })
     ).rejects.toThrow("NEXT_REDIRECT");
-    expect(stores.ownerCalls).toBe(1);
     expect(stores.redirects).toEqual([{ url: "/anime/otakudesu/x-id", type: "replace" }]);
   });
   it("slug id sumber ke /anime permanen", async () => {
@@ -77,7 +68,6 @@ describe("legacy watch redirect", () => {
         searchParams: Promise.resolve({ server: "A", quality: "720p" }),
       })
     ).rejects.toThrow("NEXT_REDIRECT");
-    expect(stores.ownerCalls).toBe(1);
     expect(stores.redirects).toEqual([
       { url: "/anime/otakudesu/watch/e1?server=A&quality=720p", type: "replace" },
     ]);

@@ -2,7 +2,6 @@ import DrakorCard from "@/components/DrakorCard";
 import StatePanel from "@/components/StatePanel";
 import Icon from "@/components/Icon";
 import { getTrending, type DrakorItem } from "@/lib/drakor";
-import { requireOwner } from "@/lib/gate";
 
 export const metadata = {
   title: "Trending Drakor",
@@ -34,8 +33,6 @@ function Section({ id, title, list }: { id: string; title: string; list: DrakorI
 }
 
 export default async function TrendingPage() {
-  await requireOwner();
-
   let hari: DrakorItem[] = [];
   let minggu: DrakorItem[] = [];
   let bulan: DrakorItem[] = [];

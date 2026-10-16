@@ -1,14 +1,12 @@
 import MovieDetailView from "@/components/MovieDetailView";
 import StatePanel from "@/components/StatePanel";
 import { getDetail } from "@/lib/movie";
-import { requireOwner } from "@/lib/gate";
 
 export default async function SeriesDetailPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  await requireOwner();
   const { slug } = await params;
 
   try {

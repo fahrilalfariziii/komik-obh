@@ -5,7 +5,6 @@ import TypeFilters from "@/components/TypeFilters";
 import StatePanel from "@/components/StatePanel";
 import Icon from "@/components/Icon";
 import { searchComics } from "@/lib/sanka";
-import { requireOwner } from "@/lib/gate";
 import { isTypeFilter, matchesType, TYPE_OPTIONS } from "@/lib/komik-type";
 
 export const metadata: Metadata = {
@@ -18,7 +17,6 @@ export default async function SearchPage({
 }: {
   searchParams: Promise<{ q?: string; type?: string }>;
 }) {
-  await requireOwner();
   const sp = await searchParams;
   const q = (sp.q ?? "").trim();
   const activeType = isTypeFilter(sp.type) ? sp.type : "all";

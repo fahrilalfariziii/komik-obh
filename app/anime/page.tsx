@@ -4,7 +4,6 @@ import AnimeSearchForm from "@/components/AnimeSearchForm";
 import StatePanel from "@/components/StatePanel";
 import Icon from "@/components/Icon";
 import { getAnimeHome, getSchedule } from "@/lib/anime";
-import { requireOwner } from "@/lib/gate";
 
 export const metadata = {
   title: "Nonton Anime",
@@ -12,7 +11,6 @@ export const metadata = {
 };
 
 export default async function AnimeHome() {
-  await requireOwner();
   const [home, schedule] = await Promise.allSettled([getAnimeHome(), getSchedule()]);
   const ongoing = home.status === "fulfilled" ? home.value.data?.ongoing?.animeList ?? [] : [];
   const completed =

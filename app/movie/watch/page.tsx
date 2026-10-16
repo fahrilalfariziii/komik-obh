@@ -3,7 +3,6 @@ import Breadcrumb from "@/components/Breadcrumb";
 import MoviePlayer, { type PlayerSubtitle } from "@/components/MoviePlayer";
 import StatePanel from "@/components/StatePanel";
 import { getDetail, getPlay, resolvePlayableUrl, type MovieKind } from "@/lib/movie";
-import { requireOwner } from "@/lib/gate";
 
 export const metadata = {
   title: "Nonton",
@@ -21,7 +20,6 @@ export default async function MovieWatchPage({
     episode?: string;
   }>;
 }) {
-  await requireOwner();
   const sp = await searchParams;
   const slug = (sp.slug ?? "").trim();
   const id = (sp.id ?? "").trim();

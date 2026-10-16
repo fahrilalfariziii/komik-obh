@@ -2,7 +2,6 @@ import AnimeCard from "@/components/AnimeCard";
 import StatePanel from "@/components/StatePanel";
 import Icon from "@/components/Icon";
 import { getSchedule } from "@/lib/anime";
-import { requireOwner } from "@/lib/gate";
 
 export const metadata = {
   title: "Jadwal Rilis Anime",
@@ -10,8 +9,6 @@ export const metadata = {
 };
 
 export default async function JadwalPage() {
-  await requireOwner();
-
   let days: Array<{
     day: string;
     anime_list: Array<{ title: string; slug: string; poster: string }>;

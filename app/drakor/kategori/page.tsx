@@ -2,7 +2,6 @@ import Link from "next/link";
 import StatePanel from "@/components/StatePanel";
 import Icon from "@/components/Icon";
 import { getKategori } from "@/lib/drakor";
-import { requireOwner } from "@/lib/gate";
 
 export const metadata = {
   title: "Kategori Drakor",
@@ -10,8 +9,6 @@ export const metadata = {
 };
 
 export default async function KategoriPage() {
-  await requireOwner();
-
   let items: Array<{ id: string; title: string; count?: number }> = [];
   try {
     const res = await getKategori();

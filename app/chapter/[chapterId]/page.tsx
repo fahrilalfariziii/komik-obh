@@ -8,7 +8,6 @@ import Breadcrumb from "@/components/Breadcrumb";
 import StatePanel from "@/components/StatePanel";
 import Icon from "@/components/Icon";
 import { getChapter, getComicDetail, pickPages } from "@/lib/sanka";
-import { requireOwner } from "@/lib/gate";
 
 export default async function ChapterPage({
   params,
@@ -17,7 +16,6 @@ export default async function ChapterPage({
   params: Promise<{ chapterId: string }>;
   searchParams: Promise<{ manga?: string; proxy?: string }>;
 }) {
-  await requireOwner();
   const { chapterId } = await params;
   const sp = await searchParams;
   const useProxy = (sp.proxy ?? "1") !== "0";

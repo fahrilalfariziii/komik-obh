@@ -12,7 +12,6 @@ import {
   resolveOtakudesuStream,
   type AnimeWatchView,
 } from "@/lib/anime-sources";
-import { requireOwner } from "@/lib/gate";
 
 export default async function WatchPage({
   params,
@@ -21,7 +20,6 @@ export default async function WatchPage({
   params: Promise<{ source: string; episodeId: string }>;
   searchParams: Promise<{ server?: string; quality?: string }>;
 }) {
-  await requireOwner();
   const { source, episodeId } = await params;
   const sp = await searchParams;
 

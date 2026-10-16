@@ -3,7 +3,6 @@ import DrakorCard from "@/components/DrakorCard";
 import StatePanel from "@/components/StatePanel";
 import Icon from "@/components/Icon";
 import { getOngoing, type DrakorItem } from "@/lib/drakor";
-import { requireOwner } from "@/lib/gate";
 
 export const metadata = {
   title: "Drakor Ongoing",
@@ -22,7 +21,6 @@ export default async function OngoingPage({
 }: {
   searchParams: Promise<{ page?: string }>;
 }) {
-  await requireOwner();
   const sp = await searchParams;
   const page = normPage(sp.page);
 

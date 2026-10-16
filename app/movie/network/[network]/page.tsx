@@ -3,7 +3,6 @@ import MovieListBody from "@/components/MovieListBody";
 import StatePanel from "@/components/StatePanel";
 import Icon from "@/components/Icon";
 import { NETWORKS, NETWORK_SORTS, getNetwork, type MovieItem } from "@/lib/movie";
-import { requireOwner } from "@/lib/gate";
 
 function networkLabel(slug: string) {
   return NETWORKS.find((n) => n.slug === slug)?.label ?? slug;
@@ -21,7 +20,6 @@ export default async function NetworkPage({
   params: Promise<{ network: string }>;
   searchParams: Promise<{ page?: string; sort?: string }>;
 }) {
-  await requireOwner();
   const { network } = await params;
   const sp = await searchParams;
   const page = normPage(sp.page);
