@@ -7,6 +7,10 @@ export type ChapterRead = {
 
 export type WatchPayload = {
   episodeId?: string;
+  // Drakor & movie menyimpan episode; movie (series) juga season/kind.
+  episode?: number | null;
+  season?: number | null;
+  kind?: "movie" | "series";
   position?: number | null;
   duration?: number | null;
 };
@@ -44,10 +48,18 @@ export function inRanges(set: Range[], n: number): boolean {
 }
 
 // Posisi nonton hanya boleh maju: rewind tidak menurunkan tersimpanan.
+// Pindah episode mengreset: posisi episode lama tidak boleh menular.
 export function mergeWatchPayload(
   prev: WatchPayload | null,
   next: WatchPayload,
 ): WatchPayload {
+  if (
+    typeof prev?.episodeId === "string" &&
+    typeof next.episodeId === "string" &&
+    prev.episodeId !== next.episodeId
+  ) {
+    return { ...next };
+  }
   const a = typeof prev?.position === "number" ? prev.position : null;
   const b = typeof next.position === "number" ? next.position : null;
   const position = a !== null && b !== null ? Math.max(a, b) : a ?? b;
