@@ -8,6 +8,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import StatePanel from "@/components/StatePanel";
 import Icon from "@/components/Icon";
 import { getChapter, getComicDetail, pickPages } from "@/lib/sanka";
+import { parseNum } from "@/lib/history-state";
 
 export default async function ChapterPage({
   params,
@@ -71,7 +72,16 @@ export default async function ChapterPage({
         <p className="mt-0.5 text-sm text-[var(--accent)]">{chapter.chapter_title}</p>
 
         <div className="mt-5">
-          <ReaderView pages={pages} />
+          <ReaderView
+            pages={pages}
+            record={{
+              mangaSlug,
+              mangaTitle: chapter.manga_title,
+              chapterSlug: chapterId,
+              chapterNumber: parseNum(chapter.chapter_title),
+              posterUrl: detail?.image ?? null,
+            }}
+          />
         </div>
       </div>
 

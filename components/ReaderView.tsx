@@ -1,8 +1,27 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { recordComicRead } from "@/lib/history";
 
-function PageImage({ src, index, eager }: { src: string; index: number; eager: boolean }) {
+export type ReaderRecord = {
+  mangaSlug: string;
+  mangaTitle: string;
+  chapterSlug: string;
+  chapterNumber: number | null;
+  posterUrl: string | null;
+};
+
+function PageImage({
+  src,
+  index,
+  eager,
+  onLoaded,
+}: {
+  src: string;
+  index: number;
+  eager: boolean;
+  onLoaded?: () => void;
+}) {
   const [failed, setFailed] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [retry, setRetry] = useState(0);
@@ -41,7 +60,10 @@ function PageImage({ src, index, eager }: { src: string; index: number; eager: b
         loading={eager ? "eager" : "lazy"}
         fetchPriority={eager ? "high" : "auto"}
         decoding="async"
-        onLoad={() => setLoaded(true)}
+        onLoad={() => {
+          setLoaded(true);
+          onLoaded?.();
+        }}
         onError={() => setFailed(true)}
         className={`relative mx-auto block h-auto w-full transition-opacity duration-300 ${
           loaded ? "opacity-100" : "opacity-0"
@@ -51,9 +73,29 @@ function PageImage({ src, index, eager }: { src: string; index: number; eager: b
   );
 }
 
-export default function ReaderView({ pages }: { pages: string[] }) {
+export default function ReaderView({
+  pages,
+  record,
+}: {
+  pages: string[];
+  record?: ReaderRecord;
+}) {
   const [current, setCurrent] = useState(1);
   const refs = useRef<Array<HTMLDivElement | null>>([]);
+  const recordedRef = useRef(false);
+
+  // Riwayat baca: sekali per mount, dipicu halaman pertama yang berhasil dimuat.
+  function onFirstPageLoaded() {
+    if (!record || recordedRef.current) return;
+    recordedRef.current = true;
+    void recordComicRead({
+      mangaSlug: record.mangaSlug,
+      title: record.mangaTitle,
+      chapterSlug: record.chapterSlug,
+      chapterNumber: record.chapterNumber,
+      posterUrl: record.posterUrl,
+    }).catch(() => {});
+  }
 
   // Lacak halaman yang sedang terlihat untuk indikator posisi baca.
   useEffect(() => {
@@ -89,7 +131,12 @@ export default function ReaderView({ pages }: { pages: string[] }) {
               refs.current[i] = el;
             }}
           >
-            <PageImage src={src} index={i} eager={i < 3} />
+            <PageImage
+              src={src}
+              index={i}
+              eager={i < 3}
+              onLoaded={i === 0 ? onFirstPageLoaded : undefined}
+            />
           </div>
         ))}
       </div>
