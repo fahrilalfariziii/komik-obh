@@ -1,8 +1,10 @@
 import Link from "next/link";
 import Breadcrumb from "@/components/Breadcrumb";
 import AnimePlayer from "@/components/AnimePlayer";
+import AnimeWatchRecorder from "@/components/AnimeWatchRecorder";
 import StatePanel from "@/components/StatePanel";
 import Icon from "@/components/Icon";
+import { parseNum } from "@/lib/history-state";
 import {
   fromAnoboyEpisode,
   fromOtakudesuEpisode,
@@ -83,6 +85,9 @@ export default async function WatchPage({
   const qualities = view.serverGroups;
   const eps = view.episodes;
   const downloads = view.downloads;
+  const episodeNumber = parseNum(
+    eps.find((e) => e.id === episodeId)?.eps ?? episodeId,
+  );
 
   return (
     <main className="mx-auto max-w-4xl px-4 pb-28 pt-6 sm:pb-12">
@@ -90,6 +95,13 @@ export default async function WatchPage({
         trail={[{ label: "Beranda", href: "/" }, { label: "Anime", href: "/anime" }, { label: view.title }]}
       />
       <h1 className="mt-4 line-clamp-2 text-xl font-bold tracking-tight">{view.title}</h1>
+      <AnimeWatchRecorder
+        source={source}
+        animeSlug={view.animeId}
+        animeTitle={view.title}
+        episodeId={episodeId}
+        episodeNumber={episodeNumber}
+      />
       {view.detailHref ? (
         <p className="mt-2">
           <Link

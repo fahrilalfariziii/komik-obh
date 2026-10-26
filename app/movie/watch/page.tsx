@@ -2,7 +2,10 @@ import Link from "next/link";
 import Breadcrumb from "@/components/Breadcrumb";
 import MoviePlayer, { type PlayerSubtitle } from "@/components/MoviePlayer";
 import StatePanel from "@/components/StatePanel";
+import Icon from "@/components/Icon";
 import { getDetail, getPlay, resolvePlayableUrl, type MovieKind } from "@/lib/movie";
+import { getWatchResume } from "@/lib/history";
+import { formatPosition } from "@/lib/history-state";
 
 export const metadata = {
   title: "Nonton",
@@ -18,6 +21,7 @@ export default async function MovieWatchPage({
     kind?: string;
     season?: string;
     episode?: string;
+    t?: string;
   }>;
 }) {
   const sp = await searchParams;
@@ -82,6 +86,19 @@ export default async function MovieWatchPage({
 
   const subLabel = kind === "series" && season && episode ? `S${season} E${episode}` : "";
 
+  // Resume: hanya untuk episode/ film yang sama dan belum selesai (gate di resumeFor).
+  const initialSeek = Number(sp.t ?? 0) || 0;
+  let resume: Awaited<ReturnType<typeof getWatchResume>> = null;
+  try {
+    resume = await getWatchResume({ domain: "movie", ref: slug, episodeId: id });
+  } catch {
+    resume = null;
+  }
+  const qs = new URLSearchParams({ slug, id, kind });
+  if (season) qs.set("season", season);
+  if (episode) qs.set("episode", episode);
+  const chipHref = resume ? `/movie/watch?${qs.toString()}&t=${resume.resumeAt}` : null;
+
   return (
     <main className="mx-auto max-w-4xl px-4 pb-28 pt-6 sm:pb-12">
       <Breadcrumb
@@ -106,10 +123,27 @@ export default async function MovieWatchPage({
       </p>
 
       <div className="mt-4">
+        {chipHref && resume ? (
+          <Link
+            href={chipHref}
+            className="mb-3 inline-flex min-h-[40px] items-center gap-2 rounded-[var(--radius-control)] bg-[var(--accent)] px-4 text-sm font-semibold text-[var(--accent-ink)] transition-colors hover:bg-[var(--accent-hover)]"
+          >
+            <Icon name="play" size={14} />
+            Lanjut di {formatPosition(resume.resumeAt)}
+          </Link>
+        ) : null}
         <MoviePlayer
           sources={sources}
           subtitles={subtitles}
           title={subLabel ? `${title} ${subLabel}` : title}
+          historyRef={{
+            kind,
+            slug,
+            episodeId: id,
+            season: season ? Number.parseInt(season, 10) || undefined : undefined,
+            episode: episode ? Number.parseInt(episode, 10) || undefined : undefined,
+          }}
+          initialSeek={initialSeek}
         />
       </div>
 

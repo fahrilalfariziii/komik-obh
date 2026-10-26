@@ -4,6 +4,8 @@ import DrakorPlayer from "@/components/DrakorPlayer";
 import StatePanel from "@/components/StatePanel";
 import Icon from "@/components/Icon";
 import { getDetail, playDrakor } from "@/lib/drakor";
+import { getWatchResume } from "@/lib/history";
+import { formatPosition } from "@/lib/history-state";
 
 function normEpisode(v?: string) {
   const n = Number.parseInt(v ?? "1", 10);
@@ -15,7 +17,7 @@ export default async function WatchPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ episode?: string }>;
+  searchParams: Promise<{ episode?: string; t?: string }>;
 }) {
   const { id } = await params;
   const sp = await searchParams;
@@ -54,6 +56,16 @@ export default async function WatchPage({
     );
   }
 
+  // Resume: hanya untuk episode yang sama dan belum selesai (gate di resumeFor).
+  const episodeId = String(episode);
+  const initialSeek = Number(sp.t ?? 0) || 0;
+  let resume: Awaited<ReturnType<typeof getWatchResume>> = null;
+  try {
+    resume = await getWatchResume({ domain: "drakor", ref: id, episodeId });
+  } catch {
+    resume = null;
+  }
+
   return (
     <main className="mx-auto max-w-4xl px-4 pb-28 pt-6 sm:pb-12">
       <Breadcrumb
@@ -75,7 +87,21 @@ export default async function WatchPage({
         </Link>
       </p>
       <div className="mt-4">
-        <DrakorPlayer sources={sources} title={`${title} episode ${episode}`} />
+        {resume ? (
+          <Link
+            href={`/drakor/watch/${id}?episode=${episode}&t=${resume.resumeAt}`}
+            className="mb-3 inline-flex min-h-[40px] items-center gap-2 rounded-[var(--radius-control)] bg-[var(--accent)] px-4 text-sm font-semibold text-[var(--accent-ink)] transition-colors hover:bg-[var(--accent-hover)]"
+          >
+            <Icon name="play" size={14} />
+            Lanjut di {formatPosition(resume.resumeAt)}
+          </Link>
+        ) : null}
+        <DrakorPlayer
+          sources={sources}
+          title={`${title} episode ${episode}`}
+          historyRef={{ id, episodeId, episode }}
+          initialSeek={initialSeek}
+        />
       </div>
 
       <div className="mt-5 flex gap-2">

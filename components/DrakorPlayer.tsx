@@ -2,13 +2,22 @@
 
 import { useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
+import { recordDrakorProgress } from "@/lib/history";
+
+export type DrakorHistoryRef = { id: string; episodeId: string; episode: number };
+
+const BEAT_MS = 10_000;
 
 export default function DrakorPlayer({
   sources,
   title,
+  historyRef = null,
+  initialSeek = 0,
 }: {
   sources: string[];
   title: string;
+  historyRef?: DrakorHistoryRef | null;
+  initialSeek?: number;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [srcIndex, setSrcIndex] = useState(0);
@@ -37,6 +46,84 @@ export default function DrakorPlayer({
       hls.destroy();
     };
   }, [src]);
+
+  // Resume posisi: seek sekali per mount saat metadata siap; 0 = mulai dari awal.
+  const didSeekRef = useRef(false);
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !initialSeek) return;
+    const onMeta = () => {
+      if (didSeekRef.current) return;
+      didSeekRef.current = true;
+      video.currentTime = initialSeek;
+    };
+    if (video.readyState >= 1) onMeta();
+    video.addEventListener("loadedmetadata", onMeta);
+    return () => video.removeEventListener("loadedmetadata", onMeta);
+  }, [initialSeek]);
+
+  // Heartbeat riwayat: record di playing pertama lalu tiap 10 s selama berjalan;
+  // pagehide/hidden mengirim posisi terakhir (kehilangan ≤10 s terakhir diterima).
+  const hId = historyRef?.id;
+  const hEpisodeId = historyRef?.episodeId;
+  const hEpisode = historyRef?.episode;
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !hId || !hEpisodeId) return;
+
+    let interval: ReturnType<typeof setInterval> | null = null;
+
+    const record = () => {
+      void recordDrakorProgress({
+        id: hId,
+        title,
+        episodeId: hEpisodeId,
+        episode: hEpisode ?? null,
+        position: video.currentTime,
+        duration: video.duration,
+      }).catch(() => {});
+    };
+    const start = () => {
+      record();
+      if (interval) return;
+      interval = setInterval(() => {
+        if (video.paused || !Number.isFinite(video.duration) || video.duration <= 0) return;
+        record();
+      }, BEAT_MS);
+    };
+    const stop = () => {
+      if (interval) {
+        clearInterval(interval);
+        interval = null;
+      }
+    };
+    const onPlay = () => start();
+    const onPause = () => stop();
+    const onHide = () => {
+      stop();
+      try {
+        record();
+      } catch {
+        // kehilangan detak terakhir diterima.
+      }
+    };
+    const onVis = () => {
+      if (document.visibilityState === "hidden") onHide();
+    };
+
+    video.addEventListener("playing", onPlay);
+    video.addEventListener("pause", onPause);
+    document.addEventListener("visibilitychange", onVis);
+    window.addEventListener("pagehide", onHide);
+    return () => {
+      video.removeEventListener("playing", onPlay);
+      video.removeEventListener("pause", onPause);
+      document.removeEventListener("visibilitychange", onVis);
+      window.removeEventListener("pagehide", onHide);
+      stop();
+    };
+  }, [hId, hEpisodeId, hEpisode, title]);
 
   if (!src || failed) {
     return (
