@@ -92,6 +92,16 @@ describe("mergeWatchPayload", () => {
   it("kedua posisi tak-angka menghasilkan null", () => {
     expect(mergeWatchPayload(null, { position: null })).toEqual({ position: null });
   });
+
+  it("ganti episode: posisi direset mengikuti next", () => {
+    const prev = { episodeId: "ep-1", position: 600, duration: 4523 };
+    const next = { episodeId: "ep-2", position: 0, duration: 4523 };
+    expect(mergeWatchPayload(prev, next)).toEqual({
+      episodeId: "ep-2",
+      position: 0,
+      duration: 4523,
+    });
+  });
 });
 
 describe("isCompleted", () => {
