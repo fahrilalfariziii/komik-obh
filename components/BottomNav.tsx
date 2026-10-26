@@ -10,6 +10,7 @@ const ITEMS = [
   { href: "/drakor", label: "Drakor", icon: "film" as const },
   { href: "/movie", label: "Movie", icon: "clapper" as const },
   { href: "/peringkat", label: "Peringkat", icon: "trophy" as const },
+  { href: "/history", label: "Riwayat", icon: "riwayat" as const },
   { href: "/search", label: "Cari", icon: "search" as const },
 ];
 
@@ -25,7 +26,7 @@ export default function BottomNav() {
       aria-label="Navigasi bawah"
       className="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--border)] bg-[var(--app-bg)]/95 pb-[env(safe-area-inset-bottom)] backdrop-blur sm:hidden"
     >
-      <div className="grid grid-cols-6">
+      <div className="grid grid-cols-7">
         {ITEMS.map((item) => {
           const active = isActive(item.href);
           return (

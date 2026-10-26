@@ -9,7 +9,7 @@ export default function StatePanel({
   actionLabel,
   actionHref,
 }: {
-  icon?: "info" | "search" | "alert" | "book" | "shieldOff";
+  icon?: "info" | "search" | "alert" | "book" | "shieldOff" | "riwayat";
   title: string;
   message: string;
   actionLabel?: string;

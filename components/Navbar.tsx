@@ -11,6 +11,7 @@ const NAV = [
   { href: "/drakor", label: "Drakor", icon: "film" as const },
   { href: "/movie", label: "Movie", icon: "clapper" as const },
   { href: "/peringkat", label: "Peringkat", icon: "trophy" as const },
+  { href: "/history", label: "Riwayat", icon: "riwayat" as const },
 ];
 
 export default function Navbar() {
