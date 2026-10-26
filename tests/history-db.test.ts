@@ -89,7 +89,7 @@ describe.skipIf(!process.env.DATABASE_URL)("history db roundtrip", () => {
     expect(res).toBeNull();
   });
 
-  it("(e) ganti episode: posisi direset ke episode baru", async () => {
+  it("(e) ganti episode: posisi direset, tidak mewarisi episode lama", async () => {
     await recordMovieProgress({
       slug: P + "movie",
       kind: "series",
@@ -100,8 +100,22 @@ describe.skipIf(!process.env.DATABASE_URL)("history db roundtrip", () => {
       position: 0,
       duration: 4523,
     });
+    // Posisi 0 tanpa chip (resumeFor menolak <= 0)...
+    const atZero = await getWatchResume({ domain: "movie", ref: P + "movie", episodeId: P + "ep2" });
+    expect(atZero).toBeNull();
+    // ...dan setelah maju, posisinya milik ep2 (bukan warisan 600 dari ep1).
+    await recordMovieProgress({
+      slug: P + "movie",
+      kind: "series",
+      episodeId: P + "ep2",
+      title: "Movie Uji",
+      season: 1,
+      episode: 2,
+      position: 15,
+      duration: 4523,
+    });
     const res = await getWatchResume({ domain: "movie", ref: P + "movie", episodeId: P + "ep2" });
-    expect(res).toEqual({ resumeAt: 0 });
+    expect(res).toEqual({ resumeAt: 15 });
   });
 
   it("(f) delete menghapus baris", async () => {

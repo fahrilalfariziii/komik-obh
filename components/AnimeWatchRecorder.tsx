@@ -18,11 +18,13 @@ export default function AnimeWatchRecorder({
   episodeId: string;
   episodeNumber: number | null;
 }) {
-  const doneRef = useRef(false);
+  const doneRef = useRef<string | null>(null);
 
+  // Guard per-episode (bukan per-mount): navigasi Prev/Next mempertahankan
+  // instance komponen, jadi guard reset saat episodeId ganti.
   useEffect(() => {
-    if (doneRef.current) return;
-    doneRef.current = true;
+    if (doneRef.current === episodeId) return;
+    doneRef.current = episodeId;
     void recordAnimeWatch({ source, animeSlug, title: animeTitle, episodeId, episodeNumber }).catch(
       () => {},
     );

@@ -99,7 +99,11 @@ export default function DrakorPlayer({
       }
     };
     const onPlay = () => start();
-    const onPause = () => stop();
+    // Spec §6: pause juga trigger record (posisi terakhir sebelum berhenti).
+    const onPause = () => {
+      stop();
+      record();
+    };
     const onHide = () => {
       stop();
       try {
@@ -109,7 +113,12 @@ export default function DrakorPlayer({
       }
     };
     const onVis = () => {
-      if (document.visibilityState === "hidden") onHide();
+      if (document.visibilityState === "hidden") {
+        onHide();
+      } else if (!video.paused) {
+        // Tab kembali visible tanpa event pause: hidupkan detak kembali.
+        start();
+      }
     };
 
     video.addEventListener("playing", onPlay);

@@ -8,6 +8,7 @@ import {
   mergeWatchPayload,
   parseNum,
   resumeFor,
+  trimCandidates,
   type Range,
 } from "../lib/history-state";
 
@@ -141,6 +142,69 @@ describe("resumeFor", () => {
   it("sudah selesai: null", () => {
     const done = { episodeId: "eps-3", position: 4500, duration: 4523 };
     expect(resumeFor(done, "eps-3")).toBeNull();
+  });
+
+  it("posisi 0: null (chip tanpa makna)", () => {
+    const atZero = { episodeId: "eps-3", position: 0, duration: 4523 };
+    expect(resumeFor(atZero, "eps-3")).toBeNull();
+  });
+});
+
+describe("trimCandidates", () => {
+  const row = (domain: string, iso: string) => ({ domain, updatedAt: iso });
+
+  it("belum melewati batas: kosong", () => {
+    const rows = [
+      row("komik", "2026-01-01T00:00:00Z"),
+      row("drakor", "2026-01-02T00:00:00Z"),
+    ];
+    expect(trimCandidates(rows, 500)).toEqual([]);
+  });
+
+  it("watch terlama dihapus lebih dulu walau komik lebih tua", () => {
+    const rows = [
+      row("komik", "2025-01-01T00:00:00Z"),
+      row("drakor", "2026-01-01T00:00:00Z"),
+      row("drakor", "2026-01-02T00:00:00Z"),
+    ];
+    expect(trimCandidates(rows, 2)).toEqual([row("drakor", "2026-01-01T00:00:00Z")]);
+  });
+
+  it("watch habis: komik terlama menyusul", () => {
+    const rows = [
+      row("drakor", "2026-01-01T00:00:00Z"),
+      row("drakor", "2026-01-02T00:00:00Z"),
+      row("komik", "2025-01-01T00:00:00Z"),
+      row("komik", "2025-06-01T00:00:00Z"),
+    ];
+    expect(trimCandidates(rows, 2)).toEqual([
+      row("drakor", "2026-01-01T00:00:00Z"),
+      row("drakor", "2026-01-02T00:00:00Z"),
+    ]);
+  });
+
+  it("urutan dalam watch: terlama dulu", () => {
+    const rows = [
+      row("movie", "2026-03-01T00:00:00Z"),
+      row("anime", "2026-01-01T00:00:00Z"),
+      row("drakor", "2026-02-01T00:00:00Z"),
+    ];
+    expect(trimCandidates(rows, 1)).toEqual([
+      row("anime", "2026-01-01T00:00:00Z"),
+      row("drakor", "2026-02-01T00:00:00Z"),
+    ]);
+  });
+
+  it("input tidak diubah (murni)", () => {
+    const rows = [
+      row("komik", "2026-01-02T00:00:00Z"),
+      row("komik", "2026-01-01T00:00:00Z"),
+    ];
+    trimCandidates(rows, 1);
+    expect(rows).toEqual([
+      row("komik", "2026-01-02T00:00:00Z"),
+      row("komik", "2026-01-01T00:00:00Z"),
+    ]);
   });
 });
 

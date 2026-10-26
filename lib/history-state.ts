@@ -78,13 +78,30 @@ export function isCompleted(
 }
 
 // Resume hanya untuk episode yang sama dan belum selesai; balik detik.
+// Posisi 0 diperlakukan tanpa-lanjutan: chip "Lanjut di 0:00" tak bermakna.
 export function resumeFor(
   payload: WatchPayload | null | undefined,
   wantedEpisodeId: string,
 ): number | null {
   if (!payload || payload.episodeId !== wantedEpisodeId) return null;
   if (isCompleted(payload.position, payload.duration)) return null;
-  return typeof payload.position === "number" ? payload.position : null;
+  return typeof payload.position === "number" && payload.position > 0
+    ? payload.position
+    : null;
+}
+
+export type TrimRow = { domain: string; updatedAt: string };
+
+// Prioritas penghapusan saat riwayat melewati batas (spec §5): watch terlama
+// dulu, lalu komik terlama. Murni: tidak mengubah input. Generik agar baris
+// dengan field tambahan (ref) kembali utuh.
+export function trimCandidates<T extends TrimRow>(rows: T[], max: number): T[] {
+  if (rows.length <= max) return [];
+  const byOldest = (a: TrimRow, b: TrimRow) =>
+    Date.parse(a.updatedAt) - Date.parse(b.updatedAt);
+  const watch = rows.filter((r) => r.domain !== "komik").sort(byOldest);
+  const komik = rows.filter((r) => r.domain === "komik").sort(byOldest);
+  return [...watch, ...komik].slice(0, rows.length - max);
 }
 
 export function formatPosition(sec: number | null | undefined): string {
@@ -115,6 +132,8 @@ export function fmtRel(dateISO: string): string {
 }
 
 // "Chapter 10.5" → 10.5, "Ep 12" → 12, "TBD"/"•" → null.
+// Catatan: mengambil angka PERTAMA di string — "Season 2 Episode 3" → 2;
+// pemanggil yang menyusun label harus mengirim field paling spesifik dulu.
 export function parseNum(v: string | number | null | undefined): number | null {
   if (typeof v === "number") return Number.isFinite(v) ? v : null;
   if (typeof v !== "string") return null;

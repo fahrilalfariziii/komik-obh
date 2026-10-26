@@ -6,6 +6,7 @@ import {
   mergeRanges,
   mergeWatchPayload,
   resumeFor,
+  trimCandidates,
   type ChapterRead,
   type Range,
   type WatchPayload,
@@ -33,7 +34,6 @@ type HistoryRecord = {
 
 const PAGE_SIZE = 50;
 const HISTORY_MAX = 500;
-const WATCH_DOMAINS: Domain[] = ["anime", "drakor", "movie"];
 
 // userId selalu dari sesi Clerk; jangan pernah percaya argumen client.
 async function authUserId(): Promise<string | null> {
@@ -79,18 +79,24 @@ async function upsert(
   `;
 }
 
-// Rim overflow: watch (anime/drakor/movie) terlama duluan, komik belakang.
-// Per-row DELETE — jumlah overflow kecil, driver memparameterkan aman.
+// Rim overflow (spec §5): watch terlama dihapus dulu, lalu komik terlama —
+// urutan ditentukan helper murni trimCandidates (teruji), DELETE per-baris.
 async function trimHistory(user: string): Promise<void> {
-  const rows = (await db()`
-    SELECT domain, ref FROM history WHERE user_id = ${user}
-  `) as Array<{ domain: Domain; ref: string }>;
-  if (rows.length <= HISTORY_MAX) return;
-  const watch = rows.filter((r) => WATCH_DOMAINS.includes(r.domain));
-  const komik = rows.filter((r) => r.domain === "komik");
-  const overflow = [...watch, ...komik].slice(HISTORY_MAX);
-  for (const r of overflow) {
-    await db()`DELETE FROM history WHERE user_id = ${user} AND domain = ${r.domain} AND ref = ${r.ref}`;
+  const rows = (await db()`SELECT domain, ref, updated_at FROM history WHERE user_id = ${user}`) as Array<{
+    domain: Domain;
+    ref: string;
+    updated_at: unknown;
+  }>;
+  const victims = trimCandidates(
+    rows.map((r) => ({
+      domain: r.domain,
+      ref: r.ref,
+      updatedAt: r.updated_at instanceof Date ? r.updated_at.toISOString() : String(r.updated_at),
+    })),
+    HISTORY_MAX,
+  );
+  for (const v of victims) {
+    await db()`DELETE FROM history WHERE user_id = ${user} AND domain = ${v.domain} AND ref = ${v.ref}`;
   }
 }
 

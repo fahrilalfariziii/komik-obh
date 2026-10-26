@@ -82,12 +82,14 @@ export default function ReaderView({
 }) {
   const [current, setCurrent] = useState(1);
   const refs = useRef<Array<HTMLDivElement | null>>([]);
-  const recordedRef = useRef(false);
+  // Guard per-chapter (bukan per-mount): navigasi client-side antar chapter
+  // mempertahankan instance komponen, jadi guard harus reset saat slug ganti.
+  const recordedSlugRef = useRef<string | null>(null);
 
-  // Riwayat baca: sekali per mount, dipicu halaman pertama yang berhasil dimuat.
+  // Riwayat baca: sekali per chapter, dipicu halaman pertama yang berhasil dimuat.
   function onFirstPageLoaded() {
-    if (!record || recordedRef.current) return;
-    recordedRef.current = true;
+    if (!record || recordedSlugRef.current === record.chapterSlug) return;
+    recordedSlugRef.current = record.chapterSlug;
     void recordComicRead({
       mangaSlug: record.mangaSlug,
       title: record.mangaTitle,
